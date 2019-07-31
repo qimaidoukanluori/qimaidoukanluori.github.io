@@ -1,0 +1,2240 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="骑麦兜看落日">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="骑麦兜看落日">
+    
+    <meta name="keywords" content="Hexo,骑麦兜看落日">
+    
+    <meta name="description" content>
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>[Code]Python学习手册_第一部分_使用入门 · 骑麦兜看落日&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '5D5KDIMZEQ',
+                apiKey: 'b4ec67c101aa9269e65e640e2e469343',
+                indexName: 'my_index',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >骑麦兜看落日.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">[Code]Python学习手册_第一部分_使用入门</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>骑麦兜看落日.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:30vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            [Code]Python学习手册_第一部分_使用入门
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Note">Note</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Code">Code</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Python">Python</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">8.8k</span>阅读时长: <span class="post-count reading-time">30 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/07/21</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="第一章-问答环节"><a href="#第一章-问答环节" class="headerlink" title="第一章 问答环节"></a>第一章 问答环节</h1><blockquote>
+<p>本章探索了人们选择Python完成编程任务的原因,也看到了它实现起来的效果以及当前一些具有代表性的使用Python的鲜活例子</p>
+</blockquote>
+<hr>
+<h2 id="人们为何使用python"><a href="#人们为何使用python" class="headerlink" title="人们为何使用python"></a>人们为何使用python</h2><blockquote>
+<ul>
+<li>软件质量</li>
+<li>提高开发者的效率</li>
+<li>程序的可移植性</li>
+<li>标准库的支持</li>
+<li>组件集成</li>
+<li>享受乐趣</li>
+</ul>
+</blockquote>
+<h3 id="软件质量"><a href="#软件质量" class="headerlink" title="软件质量"></a>软件质量</h3><p>秉承了独特的简洁和高可读性的语法,以及一种高度一致的编程模式</p>
+<p>采用模块化设计、OOP在内的一些工具来提升程序的可重用性</p>
+<h3 id="开发效率"><a href="#开发效率" class="headerlink" title="开发效率"></a>开发效率</h3><p>简洁的语法、动态类型、无需编译、内置工具包</p>
+<h3 id="Python是”脚本语言”吗"><a href="#Python是”脚本语言”吗" class="headerlink" title="Python是”脚本语言”吗"></a>Python是”脚本语言”吗</h3><p>Python可定义为面向对象的脚本语言</p>
+<blockquote>
+<ul>
+<li><p>Shell工具</p>
+<p>面向系统的脚本语言代码工具</p>
+</li>
+<li><p>控制语言</p>
+<p>控制或重定向其他应用程序组件的”粘接”层</p>
+</li>
+<li><p>使用快捷</p>
+<p>应用于快速编程任务的一种简单语言</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="好吧-Python的缺点是什么呢"><a href="#好吧-Python的缺点是什么呢" class="headerlink" title="好吧,Python的缺点是什么呢"></a>好吧,Python的缺点是什么呢</h2><p>与C和C++这类编译语言相比,Python的执行速度还不够快</p>
+<p>目前Python的标准实现方式是将源代码的语句编译(或者说是转换)为字节码的形式,之后再将字节码解释出来.</p>
+<hr>
+<h2 id="如今谁在使用python"><a href="#如今谁在使用python" class="headerlink" title="如今谁在使用python"></a>如今谁在使用python</h2><p>除了个人用户使用之外,Python也被一些公司应用于商业产品的开发上.</p>
+<hr>
+<h2 id="使用python可以做些什么"><a href="#使用python可以做些什么" class="headerlink" title="使用python可以做些什么"></a>使用python可以做些什么</h2><h3 id="系统编程"><a href="#系统编程" class="headerlink" title="系统编程"></a>系统编程</h3><p>Python对操作系统服务的内置接口,使其成为编写可移植的维护操作系统的管理工具和部件(有时也称为Shell工具)的理想工具</p>
+<h3 id="用户图形接口"><a href="#用户图形接口" class="headerlink" title="用户图形接口"></a>用户图形接口</h3><p>Python内置了TKinter的标准面向对象接口Tk GUI API,使Python程序可以生成可移植的本地观感的GUI</p>
+<p>诸如PythonCard和Dabo等一些高级工具包是构建在wxPython和tkinter的基础API之上的</p>
+<h3 id="Internet脚本"><a href="#Internet脚本" class="headerlink" title="Internet脚本"></a>Internet脚本</h3><p>Python提供了标准Internet模块,它使得Python程序能够广泛地在多种网络任务中发挥作用,无论是在服务器还是客户端都是如此</p>
+<p>从网络上还可以获得很多实用Python进行Internet编程的第三方工具</p>
+<p>许多针对Python的Web开发工具包,例如,Django、TurboGears、web2py、PylonsZope和WebWare,他们使得Python能够快速构建功能完善和高质量的网站</p>
+<h3 id="组件集成"><a href="#组件集成" class="headerlink" title="组件集成"></a>组件集成</h3><p>Python可以通过C/C++系统进行拓展,并能够嵌套C/C++系统的特性,使其能够作为一种灵活的黏合语言,可以脚本化处理其他系统和组件的行为</p>
+<p>为了在脚本中使用,在Python连接编译好组件时,SWIG和SIP这样的代码生成工具可以染给这部分工作自动完成,并且CPython系统允许代码混合到Python和类似C的代码中</p>
+<p>Python的微软Windows所支持的COM,基于Java实现的Jython,基于.NET实现的IronPython和各种CORBA工具包,提供了多种不同的脚本组件</p>
+<h3 id="数据库编程"><a href="#数据库编程" class="headerlink" title="数据库编程"></a>数据库编程</h3><p>Python定义了一种通过Python脚本存取SQL数据库系统的可移植的数据库API,这个API对于各种底层应用的数据库系统都是统一的</p>
+<p>Python标准的pickle模块提供了一个简单的对象持久化系统:它能够让程序轻松地将整个Python对象保存和恢复到文件和文件类的对象中</p>
+<h3 id="快速原型"><a href="#快速原型" class="headerlink" title="快速原型"></a>快速原型</h3><p>可以在一开始利用Python做系统原型,之后再将组件移植到C或C++这样的编译语言上</p>
+<h3 id="数值计算和科学计算编程"><a href="#数值计算和科学计算编程" class="headerlink" title="数值计算和科学计算编程"></a>数值计算和科学计算编程</h3><p>通过将Python与出于速度考虑而使用编译语言编写的数值计算的常规代码进行集成,NumPy将Python编程一个缜密严谨并简单易用的数值计算工具买这个工具通常可以替代已有的代码,而这些代码都是用FORTRAN或C++等编译语言编写的</p>
+<h3 id="游戏、图像、人工智能、XML、机器人等"><a href="#游戏、图像、人工智能、XML、机器人等" class="headerlink" title="游戏、图像、人工智能、XML、机器人等"></a>游戏、图像、人工智能、XML、机器人等</h3><blockquote>
+<ul>
+<li>可以利用pygame系统使用Python对图形和游戏进行编程</li>
+<li>使用PySerial拓展使用Python对图形和游戏进行编程</li>
+<li>用PIL、PyOpenGL、Blender、Maya和其他的一些工具进行图像处理</li>
+<li>用PyRo工具包进行机器人控制编程</li>
+<li>用xml库、xmlrpclib模块和其他一些第三方拓展进行XML解析</li>
+<li>使用神经网络仿真器和专业的系统shell进行AI编程</li>
+<li>使用NLTK包进行自然语言分析</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="Python如何获得支持"><a href="#Python如何获得支持" class="headerlink" title="Python如何获得支持"></a>Python如何获得支持</h2><p>Python开发者使用一个源代码控制系统在线协同地工作</p>
+<hr>
+<h2 id="Python有哪些技术上的优点"><a href="#Python有哪些技术上的优点" class="headerlink" title="Python有哪些技术上的优点"></a>Python有哪些技术上的优点</h2><h3 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h3><p>Python是一种面向对象的语言</p>
+<p>它的类模块支持多态、操作符重载和多重继承等高级概念</p>
+<h3 id="免费"><a href="#免费" class="headerlink" title="免费"></a>免费</h3><p>Python的使用和分发是完全免费的</p>
+<h3 id="可移植"><a href="#可移植" class="headerlink" title="可移植"></a>可移植</h3><p>Python的标准实现是由可移植的ANSI C编写的，可以在目前所有的主流平台上编译和运行</p>
+<h3 id="功能强大"><a href="#功能强大" class="headerlink" title="功能强大"></a>功能强大</h3><blockquote>
+<ul>
+<li>动态类型</li>
+<li>自动内存管理</li>
+<li>大型程序支持</li>
+<li>内置对象类型</li>
+<li>内置工具</li>
+<li>库工具</li>
+<li>第三方工具</li>
+</ul>
+</blockquote>
+<h3 id="可混合"><a href="#可混合" class="headerlink" title="可混合"></a>可混合</h3><p>Python程序可以以多种方式轻易地与其他语言编写的组件”粘接”在一起</p>
+<h3 id="简单易用"><a href="#简单易用" class="headerlink" title="简单易用"></a>简单易用</h3><p>运行Python程序,只需要简单地键入Python程序并运行就可以了</p>
+<p>Python提供了简洁的语法和强大的内置工具</p>
+<h3 id="简单易学"><a href="#简单易学" class="headerlink" title="简单易学"></a>简单易学</h3><hr>
+<h2 id="Python和其他语言比较起来怎么样"><a href="#Python和其他语言比较起来怎么样" class="headerlink" title="Python和其他语言比较起来怎么样"></a>Python和其他语言比较起来怎么样</h2><blockquote>
+<ul>
+<li><p>比Tel强大</p>
+</li>
+<li><p>有着比比Perl更简洁的语法和更简单的设计，这使得Python更具可读性、更易于维护，有助于减少程序bug</p>
+</li>
+<li><p>比Java更简单、更易于使用</p>
+</li>
+<li><p>比C++更简单、更易于使用，但通常不予C++竞争</p>
+</li>
+<li><p>比Visual Basic更强大也更具备跨平台特性</p>
+</li>
+<li><p>比PHP更易懂并且用途更广</p>
+</li>
+<li><p>比Ruby更成熟、语法更具可读性</p>
+</li>
+<li><p>具备SmallTalk和Lisp等动态类型的特性，但是对于开发者及定制系统的终端用户来说更简单，也更接近传统编程语言的语法</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="本章习题"><a href="#本章习题" class="headerlink" title="本章习题"></a>本章习题</h2><ol>
+<li><p>人们选择Python的六个主要原因是什么</p>
+<blockquote>
+<p>软件质量、开发者效率、程序的可移植性、标准库的支持、组件集成和享受简便其中,质量和效率这两条是人们选择Python的主要原因</p>
+</blockquote>
+</li>
+<li><p>请列举如今正在使用Python的四个注明的公司和组织的名称</p>
+<blockquote>
+<p>Industrial Light &amp; Magic、EVE Online、Jet Propulsion Labs、Maya和ESRI等</p>
+<p>做软件开发的所有组织几乎都流行使用Python,无论是长期战略产品开发还是测试或系统管理这样的短期策略任务都广泛采用了Python</p>
+</blockquote>
+</li>
+<li><p>处于什么样的原因会让你在应用中不使用Python呢</p>
+<blockquote>
+<p>Python的缺点是它的性能:它不像C和C++这类常规的编译语言运行得那么快</p>
+<p>另一方面,它对于绝大多数应用已经足够快了,并且典型的Python代码运行起来速度接近C,因为在Python解释器中调用链接了C代码</p>
+<p>如果速度要求很苛刻的话,应用的数值处理部分可以采用编译好的扩展以满足应用要求。</p>
+</blockquote>
+</li>
+<li><p>你可以用Python做什么</p>
+<blockquote>
+<p>几乎可以在计算机上的任何方面使用Python:从网站和游戏开发到机器人和航天飞机控制</p>
+</blockquote>
+</li>
+<li><p>在python中import this有什么意义</p>
+</li>
+</ol>
+<hr>
+<h1 id="第二章-Python如何运行程序"><a href="#第二章-Python如何运行程序" class="headerlink" title="第二章 Python如何运行程序"></a>第二章 Python如何运行程序</h1><blockquote>
+<p>本章介绍了Python的执行模块并探索了这个模块的一些变体(即时编译器以及类似的工具)</p>
+</blockquote>
+<hr>
+<h2 id="Python解释器简介"><a href="#Python解释器简介" class="headerlink" title="Python解释器简介"></a>Python解释器简介</h2><p>Python解释器将读取编写的一段Python程序,并按照其中的命令执行,得出结果</p>
+<p>实际上,解释器是代码与机器的计算机硬件之间的软件逻辑层</p>
+<blockquote>
+<ul>
+<li>根据使用情况的不同,Python解释器可能采取可执行程序的形式,或是作为链接到另一个程序的一系列库</li>
+<li>根据选用的Python版本的不同,解释器本身可以用C程序实现,或一些Java类实现,或者其他的形式</li>
+</ul>
+</blockquote>
+<p>Python包包含了一些最小化的组件:一个解释器和支持的库</p>
+<p>不同平台Python的安装细节</p>
+<blockquote>
+<ul>
+<li><p>Windows用户可通过获取并运行自安装的可执行文件,把Python安装到自己的机器上</p>
+<p>双击后在所有的弹出提示框中选择”是”或”继续”即可</p>
+</li>
+<li><p>Linux和Mac OS X用户也许已经拥有了一个可用的Python预先安装在了计算机上:如今Python已成为这些平台的标准组件</p>
+</li>
+<li><p>一些Linux用户和Mac OS X用户(和大多数UNIX用户一样)可从Python的完整源代码分发包中编译安装</p>
+</li>
+<li><p>Linux用户也可以找到RPM文件,并且Mac OS X用户可以找到各种特定于Mac的安装包</p>
+</li>
+<li><p>其他平台有着对应其平台的不同的安装技术</p>
+<p>例如,Python 可以在移动电话、游戏终端和iPod上应用</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="程序执行"><a href="#程序执行" class="headerlink" title="程序执行"></a>程序执行</h2><h3 id="程序员的视角"><a href="#程序员的视角" class="headerlink" title="程序员的视角"></a>程序员的视角</h3><p>一个Python程序仅是一个包含Python语句的文本文件</p>
+<p>Python文件是以<code>.py</code>结尾的</p>
+<h3 id="Python的视角"><a href="#Python的视角" class="headerlink" title="Python的视角"></a>Python的视角</h3><p>当 Python运行脚本时,第一步是编译成所谓的”字节码”,之后将其转发到所谓的”虚拟机”中</p>
+<h4 id="字节码编译"><a href="#字节码编译" class="headerlink" title="字节码编译"></a>字节码编译</h4><p>当程序执行时,Python内部会先将源代码编译成所谓字节码的形式</p>
+<p>编译是一个简单的翻译步骤</p>
+<p>字节码是源代码底层的、与平台无关的表现形式</p>
+<p>这些字节码可以提高执行速度</p>
+<blockquote>
+<ul>
+<li>如果Python进程在机器上拥有写入权限，那么它将把程序的字节码保存为一个以<code>.pyc</code>为拓展名的文件</li>
+</ul>
+<blockquote>
+<ul>
+<li>下一次运行程序时,如果在上次保存字节码之后没有修改过源代码的话,Python将会加载<code>.pyc</code>文件并跳过编译这个步骤</li>
+<li>当Python必须重编译时,它会自动检查源文件和字节码文件的时间戳:如果又保存了源代码,下次程序运行时,字节码将会自动重新创建</li>
+</ul>
+</blockquote>
+<ul>
+<li>如果Python无法在机器上写入字节码,程序仍然可以工作:字节码将会在内存中生成并在程序结束时简单地丢弃</li>
+</ul>
+</blockquote>
+<h4 id="Python虚拟机-PVM"><a href="#Python虚拟机-PVM" class="headerlink" title="Python虚拟机(PVM)"></a>Python虚拟机(PVM)</h4><p>一旦程序编译成字节码(或字节码从已经存在的<code>.pyc</code>文件中载入),之后的字节码发送到通常称为 Python虚拟机上来执行</p>
+<p>PVM就是迭代运行字节码指令的一个大循环,一个接一个地完成操作</p>
+<h4 id="性能的含义"><a href="#性能的含义" class="headerlink" title="性能的含义"></a>性能的含义</h4><p>无法像C或C++代码一样快的原因</p>
+<blockquote>
+<ul>
+<li>在Python的工作中通常没有”build”或”make”的步骤:代码在写好之后立即运行</li>
+<li>Python字节码不是机器的二进制代码</li>
+</ul>
+</blockquote>
+<p>纯Python代码的运行速度介于传统的编译语言和传统的解释语言之间</p>
+<blockquote>
+<ul>
+<li>PVM循环仍然需解释字节码,并且字节码指令与CPU指令相比需要更多的工作</li>
+<li>仍有内部的编译步骤:Python并不需要反复地重分析和重分解每一行语句</li>
+</ul>
+</blockquote>
+<h4 id="开发的含义"><a href="#开发的含义" class="headerlink" title="开发的含义"></a>开发的含义</h4><p>编译器总是在运行时出现,并且是运行程序系统的一部分</p>
+<hr>
+<h2 id="执行模块的变体"><a href="#执行模块的变体" class="headerlink" title="执行模块的变体"></a>执行模块的变体</h2><h3 id="Python实现的替代者"><a href="#Python实现的替代者" class="headerlink" title="Python实现的替代者"></a>Python实现的替代者</h3><p>Python语言有三种主要实现方式(Cpython、Jython和IronPython)以及一些次要的实现方式,例如Stackless Python</p>
+<p>CPython是标准的实现,其他的都是有特定的目标和角色的</p>
+<h4 id="CPython"><a href="#CPython" class="headerlink" title="CPython"></a>CPython</h4><p>原始的、标准的Python实现方式通常称作CPython</p>
+<p>由可移植的ANSI C语言代码编写而成</p>
+<p>CPython是这门语言的参照实现方式,所以和其他的替代系统相比来说,它运行速度最快、最完整而且也最健全</p>
+<h4 id="Jython"><a href="#Jython" class="headerlink" title="Jython"></a>Jython</h4><p>Jython系统是一种Python语言的替代实现方式,其目的是为了与Java编程语言集成</p>
+<p>Jython包含了Java类,这些类编译Python源代码、形成Java字节码,并将得到的字节码映射到Java虚拟机上</p>
+<p>Jython的目标是让Python代码能够脚本化Java应用程序,就好像CPython允许Python脚本化C和C++组件一样</p>
+<h4 id="IronPython"><a href="#IronPython" class="headerlink" title="IronPython"></a>IronPython</h4><p>Python的第三种实现方式IronPython,其设计目的是让Python程序可以与Windows平台上的.NET框架以及与之对应的Linux上的开源的Mono编写成的应用相集成</p>
+<h3 id="执行优化工具"><a href="#执行优化工具" class="headerlink" title="执行优化工具"></a>执行优化工具</h3><h4 id="Psyco实时编译器"><a href="#Psyco实时编译器" class="headerlink" title="Psyco实时编译器"></a>Psyco实时编译器</h4><p>Psyco是一个PVM的增强工具,这个工具手机并使用信息,在程序运行时,可以将部分程序的字节码转换成底层的真正的二进制机器代码,从而实现更快的执行速度</p>
+<p>因为字节码的转换与程序运行同时发生,所以Psyco往往被看做是一个即时编译器(JIT)</p>
+<h4 id="Shedskin-C-转换器"><a href="#Shedskin-C-转换器" class="headerlink" title="Shedskin C++转换器"></a>Shedskin C++转换器</h4><p>Shedskin是一个引擎系统,它尝试将Python代码变为C++代码,然后使用机器中的C++编译器将得到的C++代码编译为机器代码</p>
+<h3 id="冻结二进制文件"><a href="#冻结二进制文件" class="headerlink" title="冻结二进制文件"></a>冻结二进制文件</h3><p>冻结二进制文件能够将程序的字节码、PVM以及任何程序所需要的Python支持文件捆绑在一起形成一个单独的文件包</p>
+<p>主要有三种系统能够生成冻结二进制文件:py2exe(Windows下使用)、PyInstaller(和py2exe类似,它能够在Linux及Unix 上使用,并且能够生成自安装的二进制文件)以及freeze(最初始的版本)</p>
+<h3 id="其他执行选项"><a href="#其他执行选项" class="headerlink" title="其他执行选项"></a>其他执行选项</h3><blockquote>
+<ul>
+<li><p>Stackless Python系统是标准CPython实现的一个变体,它不会在C语言调用栈上保存状态</p>
+<p>这使得Python更容易移植到较小的栈架构中,提供了更高效的多处理选项,并且促进了像coroutine这样的新奇的编程结构。</p>
+</li>
+<li><p>Cython系统(基于Pyrex项目所完成的工作)是一种混合的语言,它为Python代码结合了调用C函数以及使用变量、参数和类属性的C类型声明的能力</p>
+<p>Cython代码可以编译成使用Python/C API的C代码,随后可以再完整地编译</p>
+<p>尽管与标准Python并不完全兼容,Cython对于包装外部的C库以及提高Python的C扩展的编码效率都很有用</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="未来的可能性"><a href="#未来的可能性" class="headerlink" title="未来的可能性"></a>未来的可能性</h3><blockquote>
+<ul>
+<li>Parrot项目的目标就是提供一种对于多种编程语言通用的字节码格式、虚拟机以及优化技术</li>
+<li>项目PyPy尝试在PVM上重新实现Python,以便使新的实现技术成为可能</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="本章习题-1"><a href="#本章习题-1" class="headerlink" title="本章习题"></a>本章习题</h2><ol>
+<li><p>什么是Python解释器</p>
+<blockquote>
+<p>Python解释器是运行Python程序的程序</p>
+</blockquote>
+</li>
+<li><p>什么是源代码</p>
+<blockquote>
+<p>源代码是为程序所写的语句:它包括了文本文件(通常以<code>,py</code>为后缀名)的文本</p>
+</blockquote>
+</li>
+<li><p>什么是字节码</p>
+<blockquote>
+<p>字节码是Python将程序编译后所得到的底层形式</p>
+<p>Python自动将字节码保存到后缀名为<code>.pyc</code>的文件中</p>
+</blockquote>
+</li>
+<li><p>什么是PVM</p>
+<blockquote>
+<p>PVM是Python虚拟机,它是Python的运行时引擎解释编译得到的代码</p>
+</blockquote>
+</li>
+<li><p>请列出两个Python标准执行模块的变体的名字</p>
+<blockquote>
+<p>Psyco、Shedskin以及forzen binaries是执行模块的所有变体</p>
+</blockquote>
+</li>
+<li><p>CPython、Jython以及IronPython有什么不同</p>
+<blockquote>
+<p>CPython是Python语言的标准实现</p>
+<p>Jython 和IronPython分别是Python程序的Java和.NET的实现</p>
+<p>它们都是Python的编译器的替代实现</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<h1 id="第三章-如何运行程序"><a href="#第三章-如何运行程序" class="headerlink" title="第三章 如何运行程序"></a>第三章 如何运行程序</h1><blockquote>
+<p>本章学习启动Python程序的一般方法:通过交互地输入运行代码、通过系统命令行运行保存在文件中的代码、文件图标点击、模块导入、exec调用以及像DILE这样的IDE GUI</p>
+</blockquote>
+<hr>
+<h2 id="交互提示模式下编写代码"><a href="#交互提示模式下编写代码" class="headerlink" title="交互提示模式下编写代码"></a>交互提示模式下编写代码</h2><p>在系统提示环境下输入<code>python</code>后即可开始一个交互的Python会话</p>
+<h3 id="交互地运行代码"><a href="#交互地运行代码" class="headerlink" title="交互地运行代码"></a>交互地运行代码</h3><p>Python交互对话刚开始时将会打印两行信息文本</p>
+<p>然后显示等待输入新的Python语句或表达式的提示符<code>&gt;&gt;&gt;</code></p>
+<p>输入代码的结果将会在按下<code>Enter</code>键后在<code>&gt;&gt;&gt;</code>这一行之后显示</p>
+<p>在Unix系统中输入<code>Ctrl+D</code>退出,在MS-DOS和Windows系统中输入<code>Ctrl+Z</code>退出</p>
+<p>由于交互式对话自动打印输入表达式的结果,所以不需要每次都刻意地输入”print”</p>
+<h3 id="为什么使用交互提示模式"><a href="#为什么使用交互提示模式" class="headerlink" title="为什么使用交互提示模式"></a>为什么使用交互提示模式</h3><p>交互提示模式根据用户的输入运行代码并响应结果</p>
+<p>交互提示模式不会把代码保存到一个文件中,所以不能在交互会话中编写大量的代码</p>
+<h4 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h4><p>由于代码是立即执行的,交互提示模式可以进行实验,这种方式不会带来任何破坏</p>
+<p>当犯下一个错误的时候,会得到一条有意义的出错消息,指出该错误以及出错的代码行,而不会导致Python或计算机崩溃</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>可以交互地导入模块文件,并且通过在交互提示模式中输入命令从而在它们定义的工具上运行测试</p>
+<h3 id="使用交互提示模式"><a href="#使用交互提示模式" class="headerlink" title="使用交互提示模式"></a>使用交互提示模式</h3><blockquote>
+<ul>
+<li><p>只能够输入Python命令,不能直接输入系统命令,可以通过<code>os.system</code>使用系统命令</p>
+</li>
+<li><p>在文件中打印语句是必须的,在交互模式下则不需要</p>
+</li>
+<li><p>无论是在交互模式下还是在一个文本文件中,没有嵌套的语句都在第一列,不需要缩进</p>
+</li>
+<li><p>留意提示符的变换和复合语句</p>
+<p>在交互模式下输入两行或多行的复合语句时.提示符会发生变化,交互提示符会在第二行及后边的行由<code>&gt;&gt;&gt;</code>变成<code>...</code></p>
+<p>在IDLE界面中,第一行之后的行会被自动缩进</p>
+</li>
+<li><p>在交互提示模式中,用一个空行结束复合语句,即必须按下<code>Enter</code>键两次才能运行一条复合语句</p>
+<p>在文件中空行是不需要的,并且如果有的话也将会忽略</p>
+</li>
+<li><p>交互提示模式一次运行一条语句</p>
+</li>
+</ul>
+</blockquote>
+<h4 id="输入多行语句"><a href="#输入多行语句" class="headerlink" title="输入多行语句"></a>输入多行语句</h4><p>在脚本文件中,复合语句的后面不需要空行</p>
+<p>交互提示模式每次只运行一条语句,必须两次按下<code>Enter</code>键来运行复合语句</p>
+<hr>
+<h2 id="系统命令行和文件"><a href="#系统命令行和文件" class="headerlink" title="系统命令行和文件"></a>系统命令行和文件</h2><p>在交互模式下输入的代码是不会保存在一个文件中的,为了能够重新运行,不得不从头开始输入</p>
+<p>为了能够永久的保存程序,需要在文件中写入代码,这样的文件通常叫做模块</p>
+<h3 id="第一段脚本"><a href="#第一段脚本" class="headerlink" title="第一段脚本"></a>第一段脚本</h3><p>打开文本编辑器,并在命名为<code>script1.py</code>的新文本文件中输入如下Python语句:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># A first Python script</span></span><br><span class="line"><span class="keyword">import</span> sys			<span class="comment"># Load a library module</span></span><br><span class="line">print(sys.platform)</span><br><span class="line">print(<span class="number">2</span> ** <span class="number">100</span>)		<span class="comment"># Raise 2 to a  power</span></span><br><span class="line">x = <span class="string">'Spam!'</span></span><br><span class="line">print(x * <span class="number">8</span>)		<span class="comment"># String repetition</span></span><br></pre></td></tr></table></figure>
+
+<p>注释可以自成一行,也可以放置在代码行的右边</p>
+<p>#符号后的文本直接作为工人阅读的注释而忽略,并且不会看做是语句的语法的一部分</p>
+<h3 id="使用命令行运行文件"><a href="#使用命令行运行文件" class="headerlink" title="使用命令行运行文件"></a>使用命令行运行文件</h3><p>将完整的文件名作为一条python命令的第一个参数,在系统shell提示中输入,从而要求Python来运行它</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% python script1.py</span><br></pre></td></tr></table></figure>
+
+<p>使用特定的shell语法,把一个Python脚本的输出定向到一个文件中,从而保存起来以备以后使用或查看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% python script1.py &gt; saveit.txt</span><br></pre></td></tr></table></figure>
+
+<p>如果所在的目录有工作的目录不同,需要给出脚本文件的完整路径</p>
+<p>如果<code>PATH</code>没有包含Python的目录,需要给出Python的完整路径</p>
+<h3 id="使用命令行和文件"><a href="#使用命令行和文件" class="headerlink" title="使用命令行和文件"></a>使用命令行和文件</h3><blockquote>
+<ul>
+<li><p>注意Windows上的默认拓展名</p>
+<p>记事本会自动将文件保存成拓展名为<code>.txt</code>的文件</p>
+<p>Microsoft Word默认文件拓展名为<code>.doc</code>,它增加了Python语法中不合乎语法的一些格式字符</p>
+</li>
+<li><p>在系统提示模式下使用文件拓展名,但是在导入时别使用文件拓展名</p>
+</li>
+<li><p>在文件中使用print语句</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="Unix可执行脚本"><a href="#Unix可执行脚本" class="headerlink" title="Unix可执行脚本(#!)"></a>Unix可执行脚本(#!)</h3><blockquote>
+<ul>
+<li><p>它们的第一行是特定的</p>
+<p>脚本的第一行往往以字符#!开始,其后紧跟着机器Python解释器的路径</p>
+</li>
+<li><p>它们往往都拥有可执行的权限</p>
+<p>使用<code>chmod +x file.py</code>来实现这样的目的</p>
+<p>文件名可以没有<code>.py</code>后缀</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="Unix-env查找技巧"><a href="#Unix-env查找技巧" class="headerlink" title="Unix env查找技巧"></a>Unix env查找技巧</h3><p>可以在文件特定的第一行注释写入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="点击文件图标"><a href="#点击文件图标" class="headerlink" title="点击文件图标"></a>点击文件图标</h2><p>在Windows下,注册表使通过点击图标打开文件变得很容易</p>
+<p>在非Windows系统中,也能够使用相似的技巧,但是图标、文件管理器、浏览的原理以及很多方面都有少许不同</p>
+<h3 id="在Windows中点击图标"><a href="#在Windows中点击图标" class="headerlink" title="在Windows中点击图标"></a>在Windows中点击图标</h3><p>源文件在Windows中外观为白色背景的图标,字节码有黑色底色</p>
+<p>要运行文件,直接点击图标</p>
+<h3 id="input的技巧"><a href="#input的技巧" class="headerlink" title="input的技巧"></a>input的技巧</h3><p>在默认情况下,Python会生成弹出一个黑色DOS终端窗口作为文件的输入或输出,程序打印后退出终端窗口显示</p>
+<p>可以简单地在脚本的最后添加内置<code>input</code>函数的一条调用语句</p>
+<blockquote>
+<ul>
+<li>可选的接收字符串,这些字符串将作为提示打印出来</li>
+<li>以字符串的形式为脚本返回读入的文本</li>
+<li>在系统shell的层面支持输入流的重定向</li>
+</ul>
+</blockquote>
+<h3 id="图标点击的其他限制"><a href="#图标点击的其他限制" class="headerlink" title="图标点击的其他限制"></a>图标点击的其他限制</h3><p>如果脚本出现了错误,错误信息的文字将会写在弹出的终端窗口上,这个窗口马上就会消失</p>
+<hr>
+<h2 id="模块导入和重载"><a href="#模块导入和重载" class="headerlink" title="模块导入和重载"></a>模块导入和重载</h2><p>每一个以拓展名<code>.py</code>结尾的Python源代码文件都是一个模块</p>
+<p>其他的文件可以通过导入一个模块读取这个模块的内容</p>
+<p>开始一个交互对话,通过简单的<code>import</code>可以运行创建的文件</p>
+<p>在默认情况下,只是在第一次会话运行</p>
+<p>在同一次会话中再次运行文件,需要调用<code>imp</code>标准库模块中可用的<code>reload</code>函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> imp <span class="keyword">import</span> reload</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>reload(script1)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ul>
+<li><code>reload</code>函数载入并运行了文件最新版本的代码,如果已经在另一个窗口中修改并保存了它,那将反映出修改变化</li>
+<li><code>reload</code>函数希望获得的参数是一个已经加载了的模块对象的名次</li>
+</ul>
+</blockquote>
+<h3 id="模块的显要特性-属性"><a href="#模块的显要特性-属性" class="headerlink" title="模块的显要特性:属性"></a>模块的显要特性:属性</h3><blockquote>
+<ul>
+<li>模块往往就是变量名的封装,被认作是命名空间</li>
+<li>属性就是绑定在特定的对象上的变量名</li>
+</ul>
+</blockquote>
+<p>一个模块文件的变量名可以通过<code>import</code>和<code>from</code>两个Python语句读取,通过<code>reload</code>调用</p>
+<p>使用文本编辑器创建一个名为<code>myfile.py</code>的单行的Python模块文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">'dead'</span></span><br><span class="line">b = <span class="string">'parrot'</span></span><br><span class="line">c = <span class="string">'sketch'</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>import</code>语句将模块作为一个整体载入,并使用<code>object.attribute</code>的语法获得变量名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% python</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> myfile</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>myfile.a,myfile.b</span><br><span class="line">(<span class="string">'dead'</span>, <span class="string">'parrot'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>from</code>语句从模块文件中获得变量名</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% python</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> myfile <span class="keyword">import</span> a,b,c</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a,b</span><br><span class="line">(<span class="string">'dead'</span>, <span class="string">'parrot'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>dir</code>函数可以获得模块内部可用的变量名的列表</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% python</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> myfile</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dir(myfile)</span><br><span class="line">[<span class="string">'__builtins__'</span>, <span class="string">'__doc__'</span>, <span class="string">'__file__'</span>, <span class="string">'__name__'</span>, <span class="string">'__package__'</span>, <span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>]</span><br></pre></td></tr></table></figure>
+
+<p>一些以双下划线开头并结尾的变量名,由Python预定义的内置变量名,对于解释器有特定的意义</p>
+<h4 id="模块和命名空间"><a href="#模块和命名空间" class="headerlink" title="模块和命名空间"></a>模块和命名空间</h4><p>Python程序往往由多个模块文件构成,通过<code>import</code>语句连接在一起</p>
+<p>每个文件都是一个独立完备的变量包,即一个命名空间,即使在它们拼写相同的情况下,一个文件中的变量名是不会与另一个文件中的变量名冲突的</p>
+<p><code>from</code>把变量从一个文件复制到另一个文件,这可能导致在导入的文件中相同名称的变量被覆盖</p>
+<h3 id="import和reload的使用注意事项"><a href="#import和reload的使用注意事项" class="headerlink" title="import和reload的使用注意事项"></a>import和reload的使用注意事项</h3><blockquote>
+<ul>
+<li>需要记住是何时导入的,才能知道能不能够<code>reload</code></li>
+<li>需要记住当调用<code>reload</code>时需要使用括号,并且要记住让代码的最新版本运行时首先要使用<code>reload</code></li>
+<li><code>reload</code>是补课传递的,重载一个模块的话只会重载该模块,而不能够重载该模块所导入的任何模</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="使用exec运行模块文件"><a href="#使用exec运行模块文件" class="headerlink" title="使用exec运行模块文件"></a>使用exec运行模块文件</h2><p>使用<code>exec()</code>函数从交互提示模式启动文件的最新版本,而不必导入以及随后的重载</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">%  python</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>exec(open(<span class="string">'module.py'</span>).read())</span><br></pre></td></tr></table></figure>
+
+<p><code>exec</code>的工作机制是在调用它的地方粘贴了代码,因此不需要在文件修改后进行模块重载,但是对于当前正在使用的变量有潜在的默认覆盖的可能</p>
+<hr>
+<h2 id="IDLE用户界面"><a href="#IDLE用户界面" class="headerlink" title="IDLE用户界面"></a>IDLE用户界面</h2><p>IDLE是一个能够编辑、运行、浏览和调试Python程序的GUI,所有都能够在单独的界面实现</p>
+<h3 id="IDLE基础"><a href="#IDLE基础" class="headerlink" title="IDLE基础"></a>IDLE基础</h3><p>Windows下在开始按钮的Python菜单中进行启动,也能够通过右键点击Python程序图标进行选择</p>
+<p>在Unix类系统中,需要在命令行中启动IDLE的顶层脚本,或者通过点击位于Python的<code>Lib</code>目录下的<code>idlelib</code>子目录下的<code>idle,pyw</code>或<code>idle.py</code>运行</p>
+<p>为了在IDLE中创建(或编写)源文件,可以打开一个新的编辑窗口:在主窗口,选择<code>File</code>下拉菜单,并选择<code>New Windos</code>来打开一个新的文本编辑窗口(或者<code>Open...</code>去编辑一个已存在的文件)</p>
+<p>为了运行在IDLE中编辑的代码文件,首先选中文本编辑窗口,并点击窗口中的<code>Run</code>下来菜单,选择<code>Run Module</code>选项</p>
+<p><code>RESTART</code>信息告诉我们用户脚本的进程重新启动以运行编辑的脚本,并未独立的脚本输出做好准备</p>
+<h3 id="使用IDLE"><a href="#使用IDLE" class="headerlink" title="使用IDLE"></a>使用IDLE</h3><blockquote>
+<ul>
+<li><p>当保存文件时,必须明确地添加<code>.py</code></p>
+</li>
+<li><p>通过选择在文本编辑窗口<code>Run</code>→<code>Run Module</code>运行脚本,而不是通过交互模式的导入和重载</p>
+</li>
+<li><p>只需要重载交互地测试的模块</p>
+</li>
+<li><p>可以对IDLE进行定制</p>
+</li>
+<li><p>在IDLE中没有清屏选项</p>
+</li>
+<li><p>Tkinter GUI和线程程序有可能不适用于IDLE</p>
+</li>
+<li><p>如果发生了连接错误,试一下通过单个进程的模式启动IDLE</p>
+<p><code>-n</code>命令行标志位强制进入这种模式</p>
+</li>
+<li><p>谨慎使用IDLE的一些可用的特性</p>
+<ul>
+<li>不需要运行<code>import</code>命令去获取已运行的顶层文件的变量名,但是IDLE之外的环境只有在从文件中导入才能使用</li>
+<li>IDLE自动把目录修改为刚刚运行的一个文件的目录,并且将其目录添加到模块导入查找路径中,允许在没有搜索路径设置的时候导入文件,但是IDLE之外的环境无法导入文件</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="高级IDLE工具"><a href="#高级IDLE工具" class="headerlink" title="高级IDLE工具"></a>高级IDLE工具</h3><ul>
+<li><p>指向点击程序调试</p>
+<p>通过<code>Debug</code>菜单进行激活</p>
+<p>通过选择文本编辑窗口的<code>Run</code>→<code>Run Module</code>选项开始运行脚本</p>
+<p>调试器生效后,可以在文本编辑器的某一行点击右键,从而在代码中设置断点停止它的运行、显示变量值等</p>
+</li>
+<li><p>对象浏览器</p>
+<p>通过<code>File</code>菜单进行激活</p>
+<p>允许快速浏览模块搜索路径下的文件以及文件中的对象,通过点击文件或对象在文本编辑窗口打开对应的源代码</p>
+</li>
+<li><p>自动缩进</p>
+</li>
+<li><p>高级文本和文件搜索操作</p>
+</li>
+</ul>
+<hr>
+<h2 id="其他的IDE"><a href="#其他的IDE" class="headerlink" title="其他的IDE"></a>其他的IDE</h2><blockquote>
+<ul>
+<li><p>Eclipse和pyDev</p>
+<p>Eclipse在安装了pyDev插件后能够支持Python开发</p>
+<p>包含了对代码完成、语法突出显示、语法分析、重构、调试等功能的支持</p>
+</li>
+<li><p>Komodo</p>
+<ul>
+<li>包括标准的语法着色、文本编辑、调试以及其他特性</li>
+<li>项目文件、源代码控制继承、正则表达式调试和拖曳模式的GUI构建器</li>
+</ul>
+</li>
+<li><p>NetBeans IDE Python版</p>
+<p>代码完成、自动缩进和代码着色、编辑器提示、代码折叠、重构、调试、代码覆盖和测试、项目等等</p>
+</li>
+<li><p>PythonWin</p>
+<p>只能在Windows平台使用的免费的Python IDE</p>
+</li>
+<li><p>其他</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="其他启动选项"><a href="#其他启动选项" class="headerlink" title="其他启动选项"></a>其他启动选项</h2><h3 id="嵌入式调用"><a href="#嵌入式调用" class="headerlink" title="嵌入式调用"></a>嵌入式调用</h3><p>在一些特定的领域,Python代码也许会在一个封闭的系统中运行</p>
+<p>Python可以保存到一个文本文件中、存储在数据库中、从一个HTML页面获取、从XML文件解析等</p>
+<p>这样的嵌入执行模式一般用来支持终端用户定制</p>
+<h3 id="冻结二进制的可执行性"><a href="#冻结二进制的可执行性" class="headerlink" title="冻结二进制的可执行性"></a>冻结二进制的可执行性</h3><p>通过这种方式，Python程序可以像其他启动的任何可执行程序一样被启动</p>
+<h3 id="文本编辑器启动的选择"><a href="#文本编辑器启动的选择" class="headerlink" title="文本编辑器启动的选择"></a>文本编辑器启动的选择</h3><p>大多数程序员友好型文本编辑器都支持Python程序的编辑甚至运行等功能</p>
+<h3 id="其他的启动选择"><a href="#其他的启动选择" class="headerlink" title="其他的启动选择"></a>其他的启动选择</h3><ul>
+<li>在一些Macintosh系统通过拖曳Python的程序文件至Python解释器的图标去让程序运行</li>
+<li>在Windows中通过开始菜单中的<code>运行...</code>去启动Python脚本</li>
+<li>Python的标准库有一些工具允许单独进程中的其他Python程序来启动Python程序</li>
+</ul>
+<h3 id="未来的可能"><a href="#未来的可能" class="headerlink" title="未来的可能"></a>未来的可能</h3><hr>
+<h2 id="我应该选用哪种"><a href="#我应该选用哪种" class="headerlink" title="我应该选用哪种"></a>我应该选用哪种</h2><p>刚刚开始学习Python,应该使用IDLE界面做开发</p>
+<p>如果是一个有经验的程序员,可以在一个窗口使用你选择的文本编辑器,在另一个窗口通过命令行或点击图标启动编写程序</p>
+<h3 id="调试Python代码"><a href="#调试Python代码" class="headerlink" title="调试Python代码"></a>调试Python代码</h3><blockquote>
+<ul>
+<li><p>什么也不做</p>
+<p>阅读出错消息,并修改标记的行和文件</p>
+</li>
+<li><p>插入<code>print</code>语句</p>
+</li>
+<li><p>使用IDE GUI调试器</p>
+</li>
+<li><p>使用pdb命令行调试器</p>
+<p>Python附带了一个名为pdb的源代码调试器,可以作为Python的标准库中的一个模块使用</p>
+<p>在pdb中,可以输入命令来一行一行地步进执行、显示变量、设置和清除断点、继续执行到一个断点或错误</p>
+</li>
+<li><p>其它选项</p>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="本章习题-2"><a href="#本章习题-2" class="headerlink" title="本章习题"></a>本章习题</h2><ol>
+<li><p>怎样才能开始一个交互式解释器的会话</p>
+<blockquote>
+<p>在Windows下可以通过点击<code>开始</code>按钮,选择<code>程序</code>,点击<code>Python</code>,然后选择<code>Python (command line)</code>菜单选项来开始一个交互会话</p>
+<p>在Windows下可以在系统终端窗口(在Windows下的一个命令提示窗口)输入<code>python</code>作为一条系统命令行来实现同样效果</p>
+<p>另一种方法是启动IDLE,因为它的主Python shell窗口是一个交互式会话窗口</p>
+<p>如果没有设置系统的PATH变量来找到Python,需要使用cd切换到Python安装的地方,或输入python的完整路径而不是仅仅python (例如,在Windows下输入<code>C: \Python30\python</code>)</p>
+</blockquote>
+</li>
+<li><p>你应该在哪里输入系统命令行来启动一个脚本文件</p>
+<blockquote>
+<p>在输入系统命令行的地方,也就是你所在的平台提供给作为系统终端的地方:</p>
+<ul>
+<li>在Windows下的系统提示符</li>
+<li>在UNIX、Linux或Mac OS X上的xterm或终端窗口等</li>
+</ul>
+</blockquote>
+</li>
+<li><p>指出运行保存在一个脚本文件中的代码的四种或更多的方法</p>
+<blockquote>
+<p>一个脚本(实际上是模块)文件中的代码可以通过系统命令行、文件鼠标点击、导入和重载、exec内置函数以及像IDLE的Run→Run Module菜单选项这样的IDE GUI选取来运行</p>
+<p>在UNIX上,还可以使用#!技巧来运行,并且一些平台还支持更为专用的启动技术(例如，拖曳)<br>此外,一些文本编辑器有运行Python代码的独特方式,一些Python程序作为独立的“冻结二进制”可执行文件提供</p>
+<p>并且一些系统在嵌入式模式下使用Python代码,其中代码由C、C++或Java等语言编写的一个封闭程序自动运行</p>
+<p>后几种技术通常用来提供一个用户定制层级</p>
+</blockquote>
+</li>
+<li><p>指出在Windows下点击文件图标运行脚本的两个缺点</p>
+<blockquote>
+<p>打印后退出的脚本会导致输出文件马上消失,在你能够看到输出之前(这也是<code>input</code>这个技巧之所以有用的原因) </p>
+<p>你的脚本产生的同样显示在输出窗口的错误信息,会在查看其内容前关闭(这也是对于大多数开发任务,系统命令和IDLE这类IDE之所以更好的原因)</p>
+</blockquote>
+</li>
+<li><p>怎样运行一个脚本</p>
+<blockquote>
+<p>在默认情况下,Python每个进程只会导人(载入)一个模块一次,所以如果你改变了它的源代码,并且希望在不停止或者重新启动Python的情况下运行其最新的版本,你将必须重载它,在你重载一个模块之前至少已经导入了一次</p>
+<p>在系统命令行中运行代码,或者通过图标点击,或者像使用IDLE这样的IDE,这些启动机制往往每次都是运行源代码的最新版本</p>
+<p>在你希望运行的文件所在的文件编辑窗口,选择窗口的<code>Run</code>→<code>Run Module</code>菜单选项,这可以将这个窗口的源代码作为顶层脚本文件运行,并在交互Python shell窗口显示其输出</p>
+</blockquote>
+</li>
+<li><p>列举2个使用IDLE的潜在的缺点</p>
+<blockquote>
+<p>IDLE在运行某种程序时会失去响应,特别是使用多线程(本书话题之外的一个高级技巧)的GUI程序</p>
+<p>IDLE有一些方便的特性在你一旦离开IDLE GUI时会伤害你:例如在IDLE中一个脚本的变量是自动导入到交互的作用域的,而通常的Python不是这样</p>
+</blockquote>
+</li>
+<li><p>什么是命名空间,它和模块文件有什么关联</p>
+<blockquote>
+<p>命名空间就是变量( 也就是变量名)的封装,它在Python中以一个带有属性的对象的形式出现</p>
+<p>每个模块文件自动成为一个命名空间:也就是说,一个对变量的封装</p>
+<p>这些变量对应了顶层文件的赋值</p>
+<p>命名空间可以避免在Python程序中的命名冲突一因为每个模块文件都是独立完备的命名空间,文件必须明确地导入其他的文件,才能使用这些文件的变量名</p>
+</blockquote>
+<blockquote>
+<p>import this会触发Python内部的一个彩蛋,它将显示Python语言层面之下的设计哲学</p>
+</blockquote>
+</li>
+</ol>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://abcdefghijklmnopqrst.xyz">骑麦兜看落日</a>
+            <p>原文链接：<a href="http://abcdefghijklmnopqrst.xyz/2018/07/21/Code_Python学习手册_1/">http://abcdefghijklmnopqrst.xyz/2018/07/21/Code_Python学习手册_1/</a>
+            <p>发表日期：<a href="http://abcdefghijklmnopqrst.xyz/2018/07/21/Code_Python学习手册_1/">July 21st 2018, 11:00:00 pm</a>
+            <p>更新日期：<a href="http://abcdefghijklmnopqrst.xyz/2018/07/21/Code_Python学习手册_1/">September 26th 2018, 12:00:00 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/07/22/Binary_fmt/" title= "[Binary]FormatString">
+                    <div class="nextTitle">[Binary]FormatString</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/07/21/WP_巅峰极客/" title= "[WriteUp]巅峰极客">
+                    <div class="prevTitle">[WriteUp]巅峰极客</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNzY1OS8xNDE5MA==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:qimaidoukanluori@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/qimaidoukanluori" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">到访的小伙伴: <span id="busuanzi_value_site_pv"></span>只 </span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:30vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#第一章-问答环节"><span class="toc-number">1.</span> <span class="toc-text">第一章 问答环节</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#人们为何使用python"><span class="toc-number">1.1.</span> <span class="toc-text">人们为何使用python</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#软件质量"><span class="toc-number">1.1.1.</span> <span class="toc-text">软件质量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开发效率"><span class="toc-number">1.1.2.</span> <span class="toc-text">开发效率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python是”脚本语言”吗"><span class="toc-number">1.1.3.</span> <span class="toc-text">Python是”脚本语言”吗</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#好吧-Python的缺点是什么呢"><span class="toc-number">1.2.</span> <span class="toc-text">好吧,Python的缺点是什么呢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如今谁在使用python"><span class="toc-number">1.3.</span> <span class="toc-text">如今谁在使用python</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用python可以做些什么"><span class="toc-number">1.4.</span> <span class="toc-text">使用python可以做些什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#系统编程"><span class="toc-number">1.4.1.</span> <span class="toc-text">系统编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用户图形接口"><span class="toc-number">1.4.2.</span> <span class="toc-text">用户图形接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Internet脚本"><span class="toc-number">1.4.3.</span> <span class="toc-text">Internet脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件集成"><span class="toc-number">1.4.4.</span> <span class="toc-text">组件集成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库编程"><span class="toc-number">1.4.5.</span> <span class="toc-text">数据库编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快速原型"><span class="toc-number">1.4.6.</span> <span class="toc-text">快速原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数值计算和科学计算编程"><span class="toc-number">1.4.7.</span> <span class="toc-text">数值计算和科学计算编程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#游戏、图像、人工智能、XML、机器人等"><span class="toc-number">1.4.8.</span> <span class="toc-text">游戏、图像、人工智能、XML、机器人等</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python如何获得支持"><span class="toc-number">1.5.</span> <span class="toc-text">Python如何获得支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python有哪些技术上的优点"><span class="toc-number">1.6.</span> <span class="toc-text">Python有哪些技术上的优点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#面向对象"><span class="toc-number">1.6.1.</span> <span class="toc-text">面向对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#免费"><span class="toc-number">1.6.2.</span> <span class="toc-text">免费</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可移植"><span class="toc-number">1.6.3.</span> <span class="toc-text">可移植</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能强大"><span class="toc-number">1.6.4.</span> <span class="toc-text">功能强大</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可混合"><span class="toc-number">1.6.5.</span> <span class="toc-text">可混合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单易用"><span class="toc-number">1.6.6.</span> <span class="toc-text">简单易用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单易学"><span class="toc-number">1.6.7.</span> <span class="toc-text">简单易学</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python和其他语言比较起来怎么样"><span class="toc-number">1.7.</span> <span class="toc-text">Python和其他语言比较起来怎么样</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本章习题"><span class="toc-number">1.8.</span> <span class="toc-text">本章习题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第二章-Python如何运行程序"><span class="toc-number">2.</span> <span class="toc-text">第二章 Python如何运行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Python解释器简介"><span class="toc-number">2.1.</span> <span class="toc-text">Python解释器简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#程序执行"><span class="toc-number">2.2.</span> <span class="toc-text">程序执行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#程序员的视角"><span class="toc-number">2.2.1.</span> <span class="toc-text">程序员的视角</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python的视角"><span class="toc-number">2.2.2.</span> <span class="toc-text">Python的视角</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#字节码编译"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">字节码编译</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Python虚拟机-PVM"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">Python虚拟机(PVM)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#性能的含义"><span class="toc-number">2.2.2.3.</span> <span class="toc-text">性能的含义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#开发的含义"><span class="toc-number">2.2.2.4.</span> <span class="toc-text">开发的含义</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行模块的变体"><span class="toc-number">2.3.</span> <span class="toc-text">执行模块的变体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Python实现的替代者"><span class="toc-number">2.3.1.</span> <span class="toc-text">Python实现的替代者</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CPython"><span class="toc-number">2.3.1.1.</span> <span class="toc-text">CPython</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jython"><span class="toc-number">2.3.1.2.</span> <span class="toc-text">Jython</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IronPython"><span class="toc-number">2.3.1.3.</span> <span class="toc-text">IronPython</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行优化工具"><span class="toc-number">2.3.2.</span> <span class="toc-text">执行优化工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Psyco实时编译器"><span class="toc-number">2.3.2.1.</span> <span class="toc-text">Psyco实时编译器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Shedskin-C-转换器"><span class="toc-number">2.3.2.2.</span> <span class="toc-text">Shedskin C++转换器</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#冻结二进制文件"><span class="toc-number">2.3.3.</span> <span class="toc-text">冻结二进制文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他执行选项"><span class="toc-number">2.3.4.</span> <span class="toc-text">其他执行选项</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#未来的可能性"><span class="toc-number">2.3.5.</span> <span class="toc-text">未来的可能性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本章习题-1"><span class="toc-number">2.4.</span> <span class="toc-text">本章习题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#第三章-如何运行程序"><span class="toc-number">3.</span> <span class="toc-text">第三章 如何运行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#交互提示模式下编写代码"><span class="toc-number">3.1.</span> <span class="toc-text">交互提示模式下编写代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#交互地运行代码"><span class="toc-number">3.1.1.</span> <span class="toc-text">交互地运行代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用交互提示模式"><span class="toc-number">3.1.2.</span> <span class="toc-text">为什么使用交互提示模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实验"><span class="toc-number">3.1.2.1.</span> <span class="toc-text">实验</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-number">3.1.2.2.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用交互提示模式"><span class="toc-number">3.1.3.</span> <span class="toc-text">使用交互提示模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#输入多行语句"><span class="toc-number">3.1.3.1.</span> <span class="toc-text">输入多行语句</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#系统命令行和文件"><span class="toc-number">3.2.</span> <span class="toc-text">系统命令行和文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一段脚本"><span class="toc-number">3.2.1.</span> <span class="toc-text">第一段脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用命令行运行文件"><span class="toc-number">3.2.2.</span> <span class="toc-text">使用命令行运行文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用命令行和文件"><span class="toc-number">3.2.3.</span> <span class="toc-text">使用命令行和文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unix可执行脚本"><span class="toc-number">3.2.4.</span> <span class="toc-text">Unix可执行脚本(#!)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unix-env查找技巧"><span class="toc-number">3.2.5.</span> <span class="toc-text">Unix env查找技巧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#点击文件图标"><span class="toc-number">3.3.</span> <span class="toc-text">点击文件图标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#在Windows中点击图标"><span class="toc-number">3.3.1.</span> <span class="toc-text">在Windows中点击图标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#input的技巧"><span class="toc-number">3.3.2.</span> <span class="toc-text">input的技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#图标点击的其他限制"><span class="toc-number">3.3.3.</span> <span class="toc-text">图标点击的其他限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模块导入和重载"><span class="toc-number">3.4.</span> <span class="toc-text">模块导入和重载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#模块的显要特性-属性"><span class="toc-number">3.4.1.</span> <span class="toc-text">模块的显要特性:属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#模块和命名空间"><span class="toc-number">3.4.1.1.</span> <span class="toc-text">模块和命名空间</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#import和reload的使用注意事项"><span class="toc-number">3.4.2.</span> <span class="toc-text">import和reload的使用注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用exec运行模块文件"><span class="toc-number">3.5.</span> <span class="toc-text">使用exec运行模块文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDLE用户界面"><span class="toc-number">3.6.</span> <span class="toc-text">IDLE用户界面</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IDLE基础"><span class="toc-number">3.6.1.</span> <span class="toc-text">IDLE基础</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用IDLE"><span class="toc-number">3.6.2.</span> <span class="toc-text">使用IDLE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高级IDLE工具"><span class="toc-number">3.6.3.</span> <span class="toc-text">高级IDLE工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他的IDE"><span class="toc-number">3.7.</span> <span class="toc-text">其他的IDE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他启动选项"><span class="toc-number">3.8.</span> <span class="toc-text">其他启动选项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#嵌入式调用"><span class="toc-number">3.8.1.</span> <span class="toc-text">嵌入式调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#冻结二进制的可执行性"><span class="toc-number">3.8.2.</span> <span class="toc-text">冻结二进制的可执行性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文本编辑器启动的选择"><span class="toc-number">3.8.3.</span> <span class="toc-text">文本编辑器启动的选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他的启动选择"><span class="toc-number">3.8.4.</span> <span class="toc-text">其他的启动选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#未来的可能"><span class="toc-number">3.8.5.</span> <span class="toc-text">未来的可能</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#我应该选用哪种"><span class="toc-number">3.9.</span> <span class="toc-text">我应该选用哪种</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#调试Python代码"><span class="toc-number">3.9.1.</span> <span class="toc-text">调试Python代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本章习题-2"><span class="toc-number">3.10.</span> <span class="toc-text">本章习题</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 46
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2019/01/22/Code_Python可变类型的一些问题/" >[Code]Python可变类型的一些问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2019/01/22/Code_Go语言学习/" >[Code]Go语言学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/Asm_WASM初步/" >[Asm]WASM初步</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/Asm_WASM格式化字符串攻击尝试/" >[Asm]WASM格式化字符串攻击尝试</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href= "/2018/12/20/Binary_通过a的leak/" >[Binary]通过%a的leak</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href= "/2018/12/07/WP_hxpCTF/" >[WriteUp]hxpCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span><a class="archive-post-title" href= "/2018/11/27/WP_2019CISCN final/" >[WriteUp]2019CISCN final</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span><a class="archive-post-title" href= "/2018/11/27/WP_2018BCTF/" >[WriteUp]2018BCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/Binary_IO_FILE源码分析/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/05</span><a class="archive-post-title" href= "/2018/11/05/Binary_ArmPwn/" >[Binary]ARMPwn</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/04</span><a class="archive-post-title" href= "/2018/11/04/WP_上海杯/" >[WriteUp]上海杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_HCTF/" >[WriteUp]HCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_湖湘杯/" >[WriteUp]湖湘杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_SECCONCTF/" >[WriteUp]SECCONCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href= "/2018/10/24/Binary_Tcache/" >[Binary]Tcache</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/Asm_RealmodeAsm/" >[Asm]RealmodeAsm</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href= "/2018/10/13/WP_2018护网杯/" >[WriteUp]护网杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href= "/2018/10/06/Binary_IDADynamic/" >[Binary]IDADynamic</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/Linux_pwn环境搭建/" >[Linux]pwn环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_DragonCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_InCTF/" >[WriteUp]InCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/28</span><a class="archive-post-title" href= "/2018/09/28/Binary_PDF/" >[Binary]PDF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB的python调试/" >[Linux]GDB的Python调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB/" >[Linux]GDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2018/09/25/WP_DefCampCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/Android_JNI/" >[Android]JNI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/BInary_HeapExploit/" >[Binary]HeapExploit</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/13</span><a class="archive-post-title" href= "/2018/09/13/Binary_IO_FILE/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2018/09/10/Linux_GDB的源码调试/" >[Linux]GDB源码调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href= "/2018/09/01/Binary_ptmalloc源码分析/" >[Binary]ptmalloc源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/WP_pwnable.tw/" >[WriteUp]pwnable.tw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/Code_Python学习手册_7/" >[Code]Python学习手册_第七部分_异常和工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/WP_网鼎杯/" >[WriteUp]网鼎杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2018/08/14/Code_Python学习手册_6/" >[Code]Python学习手册_第六部分_类和OOP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/13</span><a class="archive-post-title" href= "/2018/08/13/WP_JarvisOJ/" >[WriteUp]JarvisOJ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href= "/2018/08/10/Code_Python学习手册_5/" >[Code]Python学习手册_第五部分_模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Code_Python学习手册_4/" >[Code]Python学习手册_第四部分_函数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Binary_Heap/" >[Binary]Heap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Linux_INT80/" >[Linux]int 80</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Code_Python学习手册_3/" >[Code]Python学习手册_第三部分_语句和语法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/25</span><a class="archive-post-title" href= "/2018/07/25/Binary_Canary/" >[Binary]Canary</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/24</span><a class="archive-post-title" href= "/2018/07/24/Code_Python学习手册_2/" >[Code]Python学习手册_第二部分_类型和运算</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/22</span><a class="archive-post-title" href= "/2018/07/22/Binary_fmt/" >[Binary]FormatString</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/Code_Python学习手册_1/" >[Code]Python学习手册_第一部分_使用入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/WP_巅峰极客/" >[WriteUp]巅峰极客</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2018/01/22/Code_Python的C拓展/" >[Code]Python的C拓展</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="Assembly"><span class="iconfont-archer">&#xe606;</span>Assembly</span>
+    
+        <span class="sidebar-tag-name" data-tags="WASM"><span class="iconfont-archer">&#xe606;</span>WASM</span>
+    
+        <span class="sidebar-tag-name" data-tags="Binary"><span class="iconfont-archer">&#xe606;</span>Binary</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwn"><span class="iconfont-archer">&#xe606;</span>Pwn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
+    
+        <span class="sidebar-tag-name" data-tags="IDA"><span class="iconfont-archer">&#xe606;</span>IDA</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="MIPS"><span class="iconfont-archer">&#xe606;</span>MIPS</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Heap"><span class="iconfont-archer">&#xe606;</span>Heap</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tcache"><span class="iconfont-archer">&#xe606;</span>Tcache</span>
+    
+        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Code"><span class="iconfont-archer">&#xe606;</span>Code</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="Go"><span class="iconfont-archer">&#xe606;</span>Go</span>
+    
+        <span class="sidebar-tag-name" data-tags="GDB"><span class="iconfont-archer">&#xe606;</span>GDB</span>
+    
+        <span class="sidebar-tag-name" data-tags="gdb"><span class="iconfont-archer">&#xe606;</span>gdb</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwntools"><span class="iconfont-archer">&#xe606;</span>Pwntools</span>
+    
+        <span class="sidebar-tag-name" data-tags="Qemu"><span class="iconfont-archer">&#xe606;</span>Qemu</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTFtime"><span class="iconfont-archer">&#xe606;</span>CTFtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="WriteUp"><span class="iconfont-archer">&#xe606;</span>WriteUp</span>
+    
+        <span class="sidebar-tag-name" data-tags="IO_FILE"><span class="iconfont-archer">&#xe606;</span>IO_FILE</span>
+    
+        <span class="sidebar-tag-name" data-tags="Stack"><span class="iconfont-archer">&#xe606;</span>Stack</span>
+    
+        <span class="sidebar-tag-name" data-tags="Re"><span class="iconfont-archer">&#xe606;</span>Re</span>
+    
+        <span class="sidebar-tag-name" data-tags="Base"><span class="iconfont-archer">&#xe606;</span>Base</span>
+    
+        <span class="sidebar-tag-name" data-tags="Arm"><span class="iconfont-archer">&#xe606;</span>Arm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cpp"><span class="iconfont-archer">&#xe606;</span>Cpp</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="JNI"><span class="iconfont-archer">&#xe606;</span>JNI</span>
+    
+        <span class="sidebar-tag-name" data-tags="Asm"><span class="iconfont-archer">&#xe606;</span>Asm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fmt"><span class="iconfont-archer">&#xe606;</span>Fmt</span>
+    
+        <span class="sidebar-tag-name" data-tags="IntegerOverflow"><span class="iconfont-archer">&#xe606;</span>IntegerOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cfunc"><span class="iconfont-archer">&#xe606;</span>Cfunc</span>
+    
+        <span class="sidebar-tag-name" data-tags="HouseOfRoman"><span class="iconfont-archer">&#xe606;</span>HouseOfRoman</span>
+    
+        <span class="sidebar-tag-name" data-tags="ShellCode"><span class="iconfont-archer">&#xe606;</span>ShellCode</span>
+    
+        <span class="sidebar-tag-name" data-tags="wargame"><span class="iconfont-archer">&#xe606;</span>wargame</span>
+    
+        <span class="sidebar-tag-name" data-tags="Random"><span class="iconfont-archer">&#xe606;</span>Random</span>
+    
+        <span class="sidebar-tag-name" data-tags="SystemCall"><span class="iconfont-archer">&#xe606;</span>SystemCall</span>
+    
+        <span class="sidebar-tag-name" data-tags="XCTF"><span class="iconfont-archer">&#xe606;</span>XCTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fastbin"><span class="iconfont-archer">&#xe606;</span>Fastbin</span>
+    
+        <span class="sidebar-tag-name" data-tags="FormatString"><span class="iconfont-archer">&#xe606;</span>FormatString</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="JarvisOJ"><span class="iconfont-archer">&#xe606;</span>JarvisOJ</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Assembly"><span class="iconfont-archer">&#xe60a;</span>Assembly</span>
+    
+        <span class="sidebar-category-name" data-categories="Binary"><span class="iconfont-archer">&#xe60a;</span>Binary</span>
+    
+        <span class="sidebar-category-name" data-categories="Code"><span class="iconfont-archer">&#xe60a;</span>Code</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="WriteUp"><span class="iconfont-archer">&#xe60a;</span>WriteUp</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "骑麦兜看落日"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
