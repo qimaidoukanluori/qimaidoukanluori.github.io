@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="骑麦兜看落日">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="骑麦兜看落日">
+    
+    <meta name="keywords" content="骑麦兜看落日,骑麦兜看落日">
+    
+    <meta name="description" content>
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>[Binary]Unicorn学习 · 骑麦兜看落日&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '5D5KDIMZEQ',
+                apiKey: 'b4ec67c101aa9269e65e640e2e469343',
+                indexName: 'my_index',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >骑麦兜看落日</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">[Binary]Unicorn学习</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>骑麦兜看落日</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:30vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            [Binary]Unicorn学习
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Note">Note</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Binary">Binary</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Unicorn">Unicorn</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.1k</span>阅读时长: <span class="post-count reading-time">9 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/10/30</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <hr>
+<h1 id="相关函数原型"><a href="#相关函数原型" class="headerlink" title="相关函数原型"></a>相关函数原型</h1><hr>
+<p>这一部分注释写的很详细了,我就直接翻译好了</p>
+<p>所有函数原型都在<code>include/unicorn/unicorn.h</code>中</p>
+<h2 id="uc-open"><a href="#uc-open" class="headerlink" title="uc_open"></a>uc_open</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_open</span><span class="params">(uc_arch arch, uc_mode mode, uc_engine **uc)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>创建一个新的unicorn实例</p>
+<p> @arch:架构类型 (<code>UC_ARCH_*</code>)<br> @mode:硬件模式.<code>UC_MODE_*</code>的组合<br> @uc:指向<code>uc_engine</code>的指针, 将在返回时更新</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-close"><a href="#uc-close" class="headerlink" title="uc_close"></a>uc_close</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_close</span><span class="params">(uc_engine *uc)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>关闭一个unicorn实例<br> 注意:必须在不再使用@uc时才调用此函数.该API释放了@uc的某些缓存,因此在@uc关闭后将Unicorn API和@uc一起使用可能会使您的应用程序崩溃.此后,@uc无效,并且不再可用.</p>
+<p> @uc:指向<code>uc_open</code>返回的句柄的指针</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-reg-write"><a href="#uc-reg-write" class="headerlink" title="uc_reg_write"></a>uc_reg_write</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_reg_write</span><span class="params">(uc_engine *uc, <span class="keyword">int</span> regid, <span class="keyword">const</span> <span class="keyword">void</span> *value)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 向寄存器写.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @regid: 要修改的寄存器ID.<br> @value: 指向将设置为寄存器@regid的值的指针</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-reg-read"><a href="#uc-reg-read" class="headerlink" title="uc_reg_read"></a>uc_reg_read</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_reg_read</span><span class="params">(uc_engine *uc, <span class="keyword">int</span> regid, <span class="keyword">void</span> *value)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 从寄存器读.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @regid: 要获取的寄存器ID.<br> @value: 指向存储寄存器值的变量的指针.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-mem-write"><a href="#uc-mem-write" class="headerlink" title="uc_mem_write"></a>uc_mem_write</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_mem_write</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> address, <span class="keyword">const</span> <span class="keyword">void</span> *bytes, <span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 向内存中写入一定的字节.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @address:要写入的内存起始地址.<br> @bytes:指向包含要写入内存的数据的指针.<br> @size:要写入的内存大小.</p>
+<p> 注意: @bytes必须足够大以容纳@size字节.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-mem-read"><a href="#uc-mem-read" class="headerlink" title="uc_mem_read"></a>uc_mem_read</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_mem_read</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> address, <span class="keyword">void</span> *bytes, <span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 从内存中读取一定的字节.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @address:要读取的内存起始地址.<br> @bytes:指向包含从内存复制的数据的指针.<br> @size:要读取的内存大小.</p>
+<p> 注意: @bytes必须足够大以容纳@size字节.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-emu-start"><a href="#uc-emu-start" class="headerlink" title="uc_emu_start"></a>uc_emu_start</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_emu_start</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> begin, <span class="keyword">uint64_t</span> until, <span class="keyword">uint64_t</span> timeout, <span class="keyword">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> Emulate machine code in a specific duration of time.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @begin:模拟开始的地址<br> @until:模拟停止的地址(即当该地址被击中时)<br> @timeout:模拟代码的持续时间(以微秒为单位).当该值为0时,我们将无限长地模拟代码,直到代码结束.<br> @count:要模拟的指令数.当该值为0时,我们将模拟所有可用代码,直到代码结束.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-emu-stop"><a href="#uc-emu-stop" class="headerlink" title="uc_emu_stop"></a>uc_emu_stop</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_emu_stop</span><span class="params">(uc_engine *uc)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 停止模拟(由<code>uc_emu_start()</code>API开始的).<br> 通常从通过追踪API注册的回调函数中调用此方法.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-hook-add"><a href="#uc-hook-add" class="headerlink" title="uc_hook_add"></a>uc_hook_add</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_hook_add</span><span class="params">(uc_engine *uc, uc_hook *hh, <span class="keyword">int</span> type, <span class="keyword">void</span> *callback,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">void</span> *user_data, <span class="keyword">uint64_t</span> begin, <span class="keyword">uint64_t</span> end, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 注册hook事件的回调.<br> 当hook事件被击中时,回调将被执行.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @hh:注册返回的hook句柄.在<code>uc_hook_del()</code>API中使用<br> @type:hook类型<br> @callback:命中指令后运行的回调<br> @user_data:用户定义数据.这将作为最后一个参数@user_data传递给回调函数.<br> @begin:回调生效区域的起始地址(含)<br> @end:回调生效区域的结束地址(含)<br>   注意 1: 仅当相关地址在[@begin,@end]范围内时,才调用回调<br>   注意 2: 如果@begin&gt;@end,则在此钩子类型被触发时调用回调@…:变量参数(取决于@type)<br>   注意: 如果@type=UC_HOOK_INSN,则为指令ID(例如:UC_X86_INS_OUT)</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-hook-del"><a href="#uc-hook-del" class="headerlink" title="uc_hook_del"></a>uc_hook_del</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_hook_del</span><span class="params">(uc_engine *uc, uc_hook hh)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 注销(删除)hook回调。<br> 此API删除<code>uc_hook_add()</code>注册的hook回调.<br> 注意: 仅当您不再要跟踪时,才应调用它.<br> 此后,@hh无效,不再可用.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @hh:uc_hook_add()返回的句柄</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-mem-map"><a href="#uc-mem-map" class="headerlink" title="uc_mem_map"></a>uc_mem_map</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_mem_map</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> address, <span class="keyword">size_t</span> size, <span class="keyword">uint32_t</span> perms)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>映射内存以进行模拟.</p>
+<p>该API添加了可用于模拟的内存区域.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @address:要映射到的新内存区域的起始地址.此地址必须对齐4KB.否则它将返回<code>UC_ERR_ARG</code>错误.<br> @size:要映射的新内存区域的大小,该大小必须是4KB的倍数,否则将返回<code>UC_ERR_ARG</code>错误.<br> @perms:新映射区域的权限.这必须是<code>UC_PROT_READ | UC_PROT_WRITE | UC_PROT_EXEC</code>的某种组合,否则将返回<code>UC_ERR_ARG</code>错误.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-mem-unmap"><a href="#uc-mem-unmap" class="headerlink" title="uc_mem_unmap"></a>uc_mem_unmap</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_mem_unmap</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> address, <span class="keyword">size_t</span> size)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> 取消模拟内存的区域.<br> 该API从模拟内存空间中删除内存映射.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @address: 要取消映射的内存区域的起始地址.此地址必须对齐4KB.否则它将返回<code>UC_ERR_ARG</code>错误.<br> @size: 要修改的内存区域的大小.此地址必须对齐4KB.否则它将返回<code>UC_ERR_ARG</code>错误.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h2 id="uc-mem-protect"><a href="#uc-mem-protect" class="headerlink" title="uc_mem_protect"></a>uc_mem_protect</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNICORN_EXPORT</span><br><span class="line"><span class="function">uc_err <span class="title">uc_mem_protect</span><span class="params">(uc_engine *uc, <span class="keyword">uint64_t</span> address, <span class="keyword">size_t</span> size, <span class="keyword">uint32_t</span> perms)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p> Set memory permissions for emulation memory.<br> This API changes permissions on an existing memory region.</p>
+<p> @uc: <code>uc_open()</code>返回的句柄<br> @address:要修改的内存区域的其实地址.此地址必须对齐4KB.否则它将返回<code>UC_ERR_ARG</code>错误.<br> @size:要修改的内存区域的大小.此地址必须对齐4KB.否则它将返回<code>UC_ERR_ARG</code>错误.<br> @perms: 映射区域的新权限.这必须是<code>UC_PROT_READ | UC_PROT_WRITE | UC_PROT_EXEC</code>的某种组合,否则将返回<code>UC_ERR_ARG</code>错误.</p>
+<p> @return 成功时返回<code>UC_ERR_OK</code>,失败时为其他值(有关详细错误,请参考<code>uc_err</code>枚举).</p>
+<h1 id="相关结构体"><a href="#相关结构体" class="headerlink" title="相关结构体"></a>相关结构体</h1><hr>
+<p>这部分仍然在<code>include/unicorn/unicorn.h</code>中</p>
+<h2 id="uc-arch"><a href="#uc-arch" class="headerlink" title="uc_arch"></a>uc_arch</h2><p>架构类型</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> uc_arch &#123;</span><br><span class="line">    UC_ARCH_ARM = <span class="number">1</span>,    <span class="comment">// ARM architecture (including Thumb, Thumb-2)</span></span><br><span class="line">    UC_ARCH_ARM64,      <span class="comment">// ARM-64, also called AArch64</span></span><br><span class="line">    UC_ARCH_MIPS,       <span class="comment">// Mips architecture</span></span><br><span class="line">    UC_ARCH_X86,        <span class="comment">// X86 architecture (including x86 &amp; x86-64)</span></span><br><span class="line">    UC_ARCH_PPC,        <span class="comment">// PowerPC architecture (currently unsupported)</span></span><br><span class="line">    UC_ARCH_SPARC,      <span class="comment">// Sparc architecture</span></span><br><span class="line">    UC_ARCH_M68K,       <span class="comment">// M68K architecture</span></span><br><span class="line">    UC_ARCH_MAX,</span><br><span class="line">&#125; uc_arch;</span><br></pre></td></tr></table></figure>
+
+<h2 id="uc-mode"><a href="#uc-mode" class="headerlink" title="uc_mode"></a>uc_mode</h2><p>硬件模式</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> uc_mode &#123;</span><br><span class="line">    UC_MODE_LITTLE_ENDIAN = <span class="number">0</span>,    <span class="comment">// little-endian mode (default mode)</span></span><br><span class="line">    UC_MODE_BIG_ENDIAN = <span class="number">1</span> &lt;&lt; <span class="number">30</span>, <span class="comment">// big-endian mode</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// arm / arm64</span></span><br><span class="line">    UC_MODE_ARM = <span class="number">0</span>,              <span class="comment">// ARM mode</span></span><br><span class="line">    UC_MODE_THUMB = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,       <span class="comment">// THUMB mode (including Thumb-2)</span></span><br><span class="line">    UC_MODE_MCLASS = <span class="number">1</span> &lt;&lt; <span class="number">5</span>,      <span class="comment">// ARM's Cortex-M series (currently unsupported)</span></span><br><span class="line">    UC_MODE_V8 = <span class="number">1</span> &lt;&lt; <span class="number">6</span>,          <span class="comment">// ARMv8 A32 encodings for ARM (currently unsupported)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// arm (32bit) cpu types</span></span><br><span class="line">    UC_MODE_ARM926 = <span class="number">1</span> &lt;&lt; <span class="number">7</span>,	  <span class="comment">// ARM926 CPU type</span></span><br><span class="line">    UC_MODE_ARM946 = <span class="number">1</span> &lt;&lt; <span class="number">8</span>,	  <span class="comment">// ARM946 CPU type</span></span><br><span class="line">    UC_MODE_ARM1176 = <span class="number">1</span> &lt;&lt; <span class="number">9</span>,	  <span class="comment">// ARM1176 CPU type</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// mips</span></span><br><span class="line">    UC_MODE_MICRO = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,       <span class="comment">// MicroMips mode (currently unsupported)</span></span><br><span class="line">    UC_MODE_MIPS3 = <span class="number">1</span> &lt;&lt; <span class="number">5</span>,       <span class="comment">// Mips III ISA (currently unsupported)</span></span><br><span class="line">    UC_MODE_MIPS32R6 = <span class="number">1</span> &lt;&lt; <span class="number">6</span>,    <span class="comment">// Mips32r6 ISA (currently unsupported)</span></span><br><span class="line">    UC_MODE_MIPS32 = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,      <span class="comment">// Mips32 ISA</span></span><br><span class="line">    UC_MODE_MIPS64 = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,      <span class="comment">// Mips64 ISA</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// x86 / x64</span></span><br><span class="line">    UC_MODE_16 = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,          <span class="comment">// 16-bit mode</span></span><br><span class="line">    UC_MODE_32 = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,          <span class="comment">// 32-bit mode</span></span><br><span class="line">    UC_MODE_64 = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,          <span class="comment">// 64-bit mode</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ppc</span></span><br><span class="line">    UC_MODE_PPC32 = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,       <span class="comment">// 32-bit mode (currently unsupported)</span></span><br><span class="line">    UC_MODE_PPC64 = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,       <span class="comment">// 64-bit mode (currently unsupported)</span></span><br><span class="line">    UC_MODE_QPX = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,         <span class="comment">// Quad Processing eXtensions mode (currently unsupported)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// sparc</span></span><br><span class="line">    UC_MODE_SPARC32 = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,     <span class="comment">// 32-bit mode</span></span><br><span class="line">    UC_MODE_SPARC64 = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,     <span class="comment">// 64-bit mode</span></span><br><span class="line">    UC_MODE_V9 = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,          <span class="comment">// SparcV9 mode (currently unsupported)</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// m68k</span></span><br><span class="line">&#125; uc_mode;</span><br></pre></td></tr></table></figure>
+
+<h2 id="uc-hook-type"><a href="#uc-hook-type" class="headerlink" title="uc_hook_type"></a>uc_hook_type</h2><p>hook类型</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">enum</span> uc_hook_type &#123;</span><br><span class="line">    <span class="comment">// Hook all interrupt/syscall events</span></span><br><span class="line">    UC_HOOK_INTR = <span class="number">1</span> &lt;&lt; <span class="number">0</span>,</span><br><span class="line">    <span class="comment">// Hook a particular instruction - only a very small subset of instructions supported here</span></span><br><span class="line">    UC_HOOK_INSN = <span class="number">1</span> &lt;&lt; <span class="number">1</span>,</span><br><span class="line">    <span class="comment">// Hook a range of code</span></span><br><span class="line">    UC_HOOK_CODE = <span class="number">1</span> &lt;&lt; <span class="number">2</span>,</span><br><span class="line">    <span class="comment">// Hook basic blocks</span></span><br><span class="line">    UC_HOOK_BLOCK = <span class="number">1</span> &lt;&lt; <span class="number">3</span>,</span><br><span class="line">    <span class="comment">// Hook for memory read on unmapped memory</span></span><br><span class="line">    UC_HOOK_MEM_READ_UNMAPPED = <span class="number">1</span> &lt;&lt; <span class="number">4</span>,</span><br><span class="line">    <span class="comment">// Hook for invalid memory write events</span></span><br><span class="line">    UC_HOOK_MEM_WRITE_UNMAPPED = <span class="number">1</span> &lt;&lt; <span class="number">5</span>,</span><br><span class="line">    <span class="comment">// Hook for invalid memory fetch for execution events</span></span><br><span class="line">    UC_HOOK_MEM_FETCH_UNMAPPED = <span class="number">1</span> &lt;&lt; <span class="number">6</span>,</span><br><span class="line">    <span class="comment">// Hook for memory read on read-protected memory</span></span><br><span class="line">    UC_HOOK_MEM_READ_PROT = <span class="number">1</span> &lt;&lt; <span class="number">7</span>,</span><br><span class="line">    <span class="comment">// Hook for memory write on write-protected memory</span></span><br><span class="line">    UC_HOOK_MEM_WRITE_PROT = <span class="number">1</span> &lt;&lt; <span class="number">8</span>,</span><br><span class="line">    <span class="comment">// Hook for memory fetch on non-executable memory</span></span><br><span class="line">    UC_HOOK_MEM_FETCH_PROT = <span class="number">1</span> &lt;&lt; <span class="number">9</span>,</span><br><span class="line">    <span class="comment">// Hook memory read events.</span></span><br><span class="line">    UC_HOOK_MEM_READ = <span class="number">1</span> &lt;&lt; <span class="number">10</span>,</span><br><span class="line">    <span class="comment">// Hook memory write events.</span></span><br><span class="line">    UC_HOOK_MEM_WRITE = <span class="number">1</span> &lt;&lt; <span class="number">11</span>,</span><br><span class="line">    <span class="comment">// Hook memory fetch for execution events</span></span><br><span class="line">    UC_HOOK_MEM_FETCH = <span class="number">1</span> &lt;&lt; <span class="number">12</span>,</span><br><span class="line">    <span class="comment">// Hook memory read events, but only successful access.</span></span><br><span class="line">    <span class="comment">// The callback will be triggered after successful read.</span></span><br><span class="line">    UC_HOOK_MEM_READ_AFTER = <span class="number">1</span> &lt;&lt; <span class="number">13</span>,</span><br><span class="line">    <span class="comment">// Hook invalid instructions exceptions.</span></span><br><span class="line">    UC_HOOK_INSN_INVALID = <span class="number">1</span> &lt;&lt; <span class="number">14</span>,</span><br><span class="line">&#125; uc_hook_type;</span><br></pre></td></tr></table></figure>
+
+<h2 id="regid"><a href="#regid" class="headerlink" title="regid"></a>regid</h2><p>对于不同架构来说,寄存器不同,不过都可以在对应架构的头文件中找到</p>
+<p>比如<code>include/unicorn/arm.h</code>中定义了arm架构的<code>regid</code></p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>官方的例子写的实在是太棒了我不想复制一遍了,我实在是太懒了</p>
+<p>官方例子在<code>samples</code>中找到</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://abcdefghijklmnopqrst.xyz">骑麦兜看落日</a>
+            <p>原文链接：<a href="http://abcdefghijklmnopqrst.xyz/2019/10/30/Binary_Unicorn学习/">http://abcdefghijklmnopqrst.xyz/2019/10/30/Binary_Unicorn学习/</a>
+            <p>发表日期：<a href="http://abcdefghijklmnopqrst.xyz/2019/10/30/Binary_Unicorn学习/">October 30th 2019, 10:00:00 pm</a>
+            <p>更新日期：<a href="http://abcdefghijklmnopqrst.xyz/2019/10/30/Binary_Unicorn学习/">October 31st 2019, 10:00:00 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/09/10/WP_2019ByteCTF/" title= "[WriteUp]2019ByteCTF">
+                    <div class="prevTitle">[WriteUp]2019ByteCTF</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNzY1OS8xNDE5MA==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:qimaidoukanluori@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/qimaidoukanluori" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">到访的小伙伴: <span id="busuanzi_value_site_pv"></span>只 </span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:30vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#相关函数原型"><span class="toc-number">1.</span> <span class="toc-text">相关函数原型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-open"><span class="toc-number">1.1.</span> <span class="toc-text">uc_open</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-close"><span class="toc-number">1.2.</span> <span class="toc-text">uc_close</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-reg-write"><span class="toc-number">1.3.</span> <span class="toc-text">uc_reg_write</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-reg-read"><span class="toc-number">1.4.</span> <span class="toc-text">uc_reg_read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mem-write"><span class="toc-number">1.5.</span> <span class="toc-text">uc_mem_write</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mem-read"><span class="toc-number">1.6.</span> <span class="toc-text">uc_mem_read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-emu-start"><span class="toc-number">1.7.</span> <span class="toc-text">uc_emu_start</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-emu-stop"><span class="toc-number">1.8.</span> <span class="toc-text">uc_emu_stop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-hook-add"><span class="toc-number">1.9.</span> <span class="toc-text">uc_hook_add</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-hook-del"><span class="toc-number">1.10.</span> <span class="toc-text">uc_hook_del</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mem-map"><span class="toc-number">1.11.</span> <span class="toc-text">uc_mem_map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mem-unmap"><span class="toc-number">1.12.</span> <span class="toc-text">uc_mem_unmap</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mem-protect"><span class="toc-number">1.13.</span> <span class="toc-text">uc_mem_protect</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#相关结构体"><span class="toc-number">2.</span> <span class="toc-text">相关结构体</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-arch"><span class="toc-number">2.1.</span> <span class="toc-text">uc_arch</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-mode"><span class="toc-number">2.2.</span> <span class="toc-text">uc_mode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#uc-hook-type"><span class="toc-number">2.3.</span> <span class="toc-text">uc_hook_type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#regid"><span class="toc-number">2.4.</span> <span class="toc-text">regid</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实例"><span class="toc-number">3.</span> <span class="toc-text">实例</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 49
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2019/10/30/Binary_Unicorn学习/" >[Binary]Unicorn学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2019/09/10/WP_2019ByteCTF/" >[WriteUp]2019ByteCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/26</span><a class="archive-post-title" href= "/2019/08/26/WP_2019OGeek/" >[WriteUp]2019OGeek</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/31</span><a class="archive-post-title" href= "/2019/07/31/WP_2019CISCN final/" >[WriteUp]2019CISCN final</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/07</span><a class="archive-post-title" href= "/2019/07/07/WP_2019WCTF/" >[WriteUp]2019WCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/2019/07/02/Asm_WASM格式化字符串攻击尝试/" >[Asm]WASM格式化字符串攻击尝试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2019/01/22/Code_Python可变类型的一些问题/" >[Code]Python可变类型的一些问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/Asm_WASM初步/" >[Asm]WASM初步</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href= "/2018/12/20/Binary_通过a的leak/" >[Binary]通过%a的leak</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href= "/2018/12/07/WP_hxpCTF/" >[WriteUp]hxpCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span><a class="archive-post-title" href= "/2018/11/27/WP_2018BCTF/" >[WriteUp]2018BCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/Binary_IO_FILE源码分析/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/05</span><a class="archive-post-title" href= "/2018/11/05/Binary_ArmPwn/" >[Asm]ARMPwn</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/04</span><a class="archive-post-title" href= "/2018/11/04/WP_上海杯/" >[WriteUp]上海杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_HCTF/" >[WriteUp]HCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_湖湘杯/" >[WriteUp]湖湘杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_SECCONCTF/" >[WriteUp]SECCONCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href= "/2018/10/24/Binary_Tcache/" >[Binary]Tcache</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/Asm_RealmodeAsm/" >[Asm]RealmodeAsm</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href= "/2018/10/13/WP_2018护网杯/" >[WriteUp]护网杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href= "/2018/10/06/Binary_IDADynamic/" >[Binary]IDADynamic</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/Linux_pwn环境搭建/" >[Linux]pwn环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_DragonCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_InCTF/" >[WriteUp]InCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/28</span><a class="archive-post-title" href= "/2018/09/28/Binary_PDF/" >[Binary]PDF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB的python调试/" >[Linux]GDB的Python调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB/" >[Linux]GDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2018/09/25/WP_DefCampCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/Android_JNI/" >[Android]JNI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/BInary_HeapExploit/" >[Binary]HeapExploit</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/13</span><a class="archive-post-title" href= "/2018/09/13/Binary_IO_FILE/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2018/09/10/Linux_GDB的源码调试/" >[Linux]GDB源码调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href= "/2018/09/01/Binary_ptmalloc源码分析/" >[Binary]ptmalloc源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/WP_pwnable.tw/" >[WriteUp]pwnable.tw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/Code_Python学习手册_7/" >[Code]Python学习手册_第七部分_异常和工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/WP_网鼎杯/" >[WriteUp]网鼎杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2018/08/14/Code_Python学习手册_6/" >[Code]Python学习手册_第六部分_类和OOP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/13</span><a class="archive-post-title" href= "/2018/08/13/WP_JarvisOJ/" >[WriteUp]JarvisOJ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href= "/2018/08/10/Code_Python学习手册_5/" >[Code]Python学习手册_第五部分_模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Code_Python学习手册_4/" >[Code]Python学习手册_第四部分_函数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Binary_Heap/" >[Binary]Heap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Linux_INT80/" >[Linux]int 80</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Code_Python学习手册_3/" >[Code]Python学习手册_第三部分_语句和语法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/25</span><a class="archive-post-title" href= "/2018/07/25/Binary_Canary/" >[Binary]Canary</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/24</span><a class="archive-post-title" href= "/2018/07/24/Code_Python学习手册_2/" >[Code]Python学习手册_第二部分_类型和运算</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/22</span><a class="archive-post-title" href= "/2018/07/22/Binary_fmt/" >[Binary]FormatString</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/Code_Python学习手册_1/" >[Code]Python学习手册_第一部分_使用入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/WP_巅峰极客/" >[WriteUp]巅峰极客</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2018/01/22/Code_Python的C拓展/" >[Code]Python的C拓展</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="Assembly"><span class="iconfont-archer">&#xe606;</span>Assembly</span>
+    
+        <span class="sidebar-tag-name" data-tags="WASM"><span class="iconfont-archer">&#xe606;</span>WASM</span>
+    
+        <span class="sidebar-tag-name" data-tags="Binary"><span class="iconfont-archer">&#xe606;</span>Binary</span>
+    
+        <span class="sidebar-tag-name" data-tags="IDA"><span class="iconfont-archer">&#xe606;</span>IDA</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="Asm"><span class="iconfont-archer">&#xe606;</span>Asm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwn"><span class="iconfont-archer">&#xe606;</span>Pwn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
+    
+        <span class="sidebar-tag-name" data-tags="Heap"><span class="iconfont-archer">&#xe606;</span>Heap</span>
+    
+        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tcache"><span class="iconfont-archer">&#xe606;</span>Tcache</span>
+    
+        <span class="sidebar-tag-name" data-tags="Code"><span class="iconfont-archer">&#xe606;</span>Code</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="GDB"><span class="iconfont-archer">&#xe606;</span>GDB</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwntools"><span class="iconfont-archer">&#xe606;</span>Pwntools</span>
+    
+        <span class="sidebar-tag-name" data-tags="Qemu"><span class="iconfont-archer">&#xe606;</span>Qemu</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gdb"><span class="iconfont-archer">&#xe606;</span>Gdb</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="WriteUp"><span class="iconfont-archer">&#xe606;</span>WriteUp</span>
+    
+        <span class="sidebar-tag-name" data-tags="Re"><span class="iconfont-archer">&#xe606;</span>Re</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTFtime"><span class="iconfont-archer">&#xe606;</span>CTFtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="IO_FILE"><span class="iconfont-archer">&#xe606;</span>IO_FILE</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Arm"><span class="iconfont-archer">&#xe606;</span>Arm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cpp"><span class="iconfont-archer">&#xe606;</span>Cpp</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="JNI"><span class="iconfont-archer">&#xe606;</span>JNI</span>
+    
+        <span class="sidebar-tag-name" data-tags="Unicorn"><span class="iconfont-archer">&#xe606;</span>Unicorn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fmt"><span class="iconfont-archer">&#xe606;</span>Fmt</span>
+    
+        <span class="sidebar-tag-name" data-tags="IntegerOverflow"><span class="iconfont-archer">&#xe606;</span>IntegerOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cfunc"><span class="iconfont-archer">&#xe606;</span>Cfunc</span>
+    
+        <span class="sidebar-tag-name" data-tags="HouseOfRoman"><span class="iconfont-archer">&#xe606;</span>HouseOfRoman</span>
+    
+        <span class="sidebar-tag-name" data-tags="ShellCode"><span class="iconfont-archer">&#xe606;</span>ShellCode</span>
+    
+        <span class="sidebar-tag-name" data-tags="FastbinAttack"><span class="iconfont-archer">&#xe606;</span>FastbinAttack</span>
+    
+        <span class="sidebar-tag-name" data-tags="HeapOverflow"><span class="iconfont-archer">&#xe606;</span>HeapOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="wargame"><span class="iconfont-archer">&#xe606;</span>wargame</span>
+    
+        <span class="sidebar-tag-name" data-tags="SystemCall"><span class="iconfont-archer">&#xe606;</span>SystemCall</span>
+    
+        <span class="sidebar-tag-name" data-tags="XCTF"><span class="iconfont-archer">&#xe606;</span>XCTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fastbin"><span class="iconfont-archer">&#xe606;</span>Fastbin</span>
+    
+        <span class="sidebar-tag-name" data-tags="FormatString"><span class="iconfont-archer">&#xe606;</span>FormatString</span>
+    
+        <span class="sidebar-tag-name" data-tags="prctl"><span class="iconfont-archer">&#xe606;</span>prctl</span>
+    
+        <span class="sidebar-tag-name" data-tags="global_max_fast"><span class="iconfont-archer">&#xe606;</span>global_max_fast</span>
+    
+        <span class="sidebar-tag-name" data-tags="read"><span class="iconfont-archer">&#xe606;</span>read</span>
+    
+        <span class="sidebar-tag-name" data-tags="UAF"><span class="iconfont-archer">&#xe606;</span>UAF</span>
+    
+        <span class="sidebar-tag-name" data-tags="OJ"><span class="iconfont-archer">&#xe606;</span>OJ</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Assembly"><span class="iconfont-archer">&#xe60a;</span>Assembly</span>
+    
+        <span class="sidebar-category-name" data-categories="Binary"><span class="iconfont-archer">&#xe60a;</span>Binary</span>
+    
+        <span class="sidebar-category-name" data-categories="Code"><span class="iconfont-archer">&#xe60a;</span>Code</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="WriteUp"><span class="iconfont-archer">&#xe60a;</span>WriteUp</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "骑麦兜看落日"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
